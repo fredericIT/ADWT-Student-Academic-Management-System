@@ -28,6 +28,7 @@ class StudentTest extends TestCase
         self::$pdo = new PDO('sqlite::memory:');
         self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        self::$pdo->sqliteCreateFunction('CONCAT', fn(...$args) => implode('', $args));
 
         self::$pdo->exec('
             CREATE TABLE departments (

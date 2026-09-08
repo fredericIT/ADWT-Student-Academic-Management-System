@@ -2,7 +2,28 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    spl_autoload_register(function (string $class): void {
+        $prefixes = [
+            'App\\'   => __DIR__ . '/../src/',
+            'Tests\\' => __DIR__ . '/../tests/',
+        ];
+        foreach ($prefixes as $prefix => $baseDir) {
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) {
+                continue;
+            }
+            $relative = substr($class, $len);
+            $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
+            if (file_exists($file)) {
+                require_once $file;
+                return;
+            }
+        }
+    });
+}
 
 // Stub PHPUnit TestCase if PHPUnit package is not installed locally
 if (!class_exists('PHPUnit\Framework\TestCase')) {
@@ -19,6 +40,8 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
             $this->expectedExceptionMessage = $message;
         }
 
+        public function expectExceptionMessageMatches(string $regularExpression): void {
+            $this->expectedExceptionMessagePattern = $regularExpression;
         public function expectExceptionMessageMatches(string $regex): void {
             $this->expectedExceptionMessageRegex = $regex;
         }
@@ -26,6 +49,7 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
         public function resetExpectedException(): void {
             $this->expectedExceptionClass = null;
             $this->expectedExceptionMessage = null;
+            $this->expectedExceptionMessagePattern = null;
             $this->expectedExceptionMessageRegex = null;
         }
 
@@ -37,6 +61,8 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
             return $this->expectedExceptionMessage;
         }
 
+        public function getExpectedExceptionMessagePattern(): ?string {
+            return $this->expectedExceptionMessagePattern;
         public function getExpectedExceptionMessageRegex(): ?string {
             return $this->expectedExceptionMessageRegex;
         }
@@ -114,6 +140,7 @@ foreach ($testClasses as $className => $filePath) {
         if (str_starts_with($method, 'test')) {
             try {
                 $setUp = new ReflectionMethod($test, 'setUp');
+                $setUp->setAccessible(true);
                 $setUp->invoke($test);
                 if (method_exists($test, 'resetExpectedException')) {
                     $test->resetExpectedException();
