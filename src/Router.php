@@ -106,6 +106,28 @@ class Router
     private function notFound(): void
     {
         http_response_code(404);
-        echo '<h1>404 — Page Not Found</h1>';
+        $pageTitle = '404 Page Not Found — ADWT Academic';
+        require __DIR__ . '/../views/layout/header.php';
+        ?>
+        <div class="text-center py-20 bg-white rounded-2xl border border-gray-200 shadow-sm max-w-2xl mx-auto my-8 px-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4 font-bold text-2xl">
+                404
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Page Not Found</h1>
+            <p class="text-gray-500 mb-8 max-w-md mx-auto">
+                The requested URL was not found on this system. Please check the URL or return to the main dashboard.
+            </p>
+            <div class="flex items-center justify-center gap-4">
+                <a href="/" class="bg-brand hover:bg-brand-dark text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                    Return to Dashboard
+                </a>
+                <a href="/search" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                    Global Search
+                </a>
+            </div>
+        </div>
+        <?php
+        require __DIR__ . '/../views/layout/footer.php';
+        exit;
     }
 }

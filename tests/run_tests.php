@@ -9,6 +9,7 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
     abstract class SimpleTestCase {
         protected ?string $expectedExceptionClass = null;
         protected ?string $expectedExceptionMessage = null;
+        protected ?string $expectedExceptionMessageRegex = null;
 
         public function expectException(string $exception): void {
             $this->expectedExceptionClass = $exception;
@@ -18,9 +19,14 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
             $this->expectedExceptionMessage = $message;
         }
 
+        public function expectExceptionMessageMatches(string $regex): void {
+            $this->expectedExceptionMessageRegex = $regex;
+        }
+
         public function resetExpectedException(): void {
             $this->expectedExceptionClass = null;
             $this->expectedExceptionMessage = null;
+            $this->expectedExceptionMessageRegex = null;
         }
 
         public function getExpectedExceptionClass(): ?string {
@@ -29,6 +35,10 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 
         public function getExpectedExceptionMessage(): ?string {
             return $this->expectedExceptionMessage;
+        }
+
+        public function getExpectedExceptionMessageRegex(): ?string {
+            return $this->expectedExceptionMessageRegex;
         }
 
         protected function assertSame($expected, $actual, string $msg = ''): void {
@@ -77,6 +87,8 @@ $testClasses = [
     'Tests\CourseTest'     => __DIR__ . '/CourseTest.php',
     'Tests\DepartmentTest' => __DIR__ . '/DepartmentTest.php',
     'Tests\LecturerTest'   => __DIR__ . '/LecturerTest.php',
+    'Tests\SearchTest'     => __DIR__ . '/SearchTest.php',
+    'Tests\DashboardTest'  => __DIR__ . '/DashboardTest.php',
 ];
 
 $totalPassed = 0;
@@ -121,6 +133,7 @@ foreach ($testClasses as $className => $filePath) {
 
                 $expectedClass = method_exists($test, 'getExpectedExceptionClass') ? $test->getExpectedExceptionClass() : null;
                 $expectedMsg   = method_exists($test, 'getExpectedExceptionMessage') ? $test->getExpectedExceptionMessage() : null;
+                $expectedRegex = method_exists($test, 'getExpectedExceptionMessageRegex') ? $test->getExpectedExceptionMessageRegex() : null;
 
                 if ($expectedClass !== null) {
                     if ($exceptionThrown === null) {
@@ -131,6 +144,9 @@ foreach ($testClasses as $className => $filePath) {
                     }
                     if ($expectedMsg !== null && !str_contains($exceptionThrown->getMessage(), $expectedMsg)) {
                         throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' contains '{$expectedMsg}'.");
+                    }
+                    if ($expectedRegex !== null && !preg_match($expectedRegex, $exceptionThrown->getMessage())) {
+                        throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' matches '{$expectedRegex}'.");
                     }
                 } elseif ($exceptionThrown !== null) {
                     throw $exceptionThrown;

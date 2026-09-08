@@ -96,12 +96,15 @@ class Student
     {
         $term = '%' . trim($nameQuery) . '%';
         $pdo  = Connection::getInstance();
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $concat = $driver === 'sqlite' ? "(first_name || ' ' || last_name)" : "CONCAT(first_name, ' ', last_name)";
+
         $stmt = $pdo->prepare(
-            'SELECT * FROM students
+            "SELECT * FROM students
               WHERE first_name LIKE :t1
                  OR last_name  LIKE :t2
-                 OR CONCAT(first_name, " ", last_name) LIKE :t3
-              ORDER BY last_name, first_name'
+                 OR {$concat} LIKE :t3
+              ORDER BY last_name, first_name"
         );
         $stmt->execute([':t1' => $term, ':t2' => $term, ':t3' => $term]);
         return array_map(fn(array $row) => self::fromRow($row), $stmt->fetchAll());
@@ -121,14 +124,17 @@ class Student
 
         $term = '%' . $query . '%';
         $pdo  = Connection::getInstance();
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $concat = $driver === 'sqlite' ? "(first_name || ' ' || last_name)" : "CONCAT(first_name, ' ', last_name)";
+
         $stmt = $pdo->prepare(
-            'SELECT * FROM students
+            "SELECT * FROM students
               WHERE student_id LIKE :t1
                  OR first_name LIKE :t2
                  OR last_name  LIKE :t3
-                 OR CONCAT(first_name, " ", last_name) LIKE :t4
+                 OR {$concat} LIKE :t4
                  OR email LIKE :t5
-              ORDER BY last_name, first_name'
+              ORDER BY last_name, first_name"
         );
         $stmt->execute([
             ':t1' => $term,
