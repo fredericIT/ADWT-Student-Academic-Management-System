@@ -167,9 +167,18 @@ class Course
     {
         $pdo  = Connection::getInstance();
         $stmt = $pdo->prepare(
-            'INSERT IGNORE INTO course_lecturer (course_id, lecturer_id) VALUES (:cid, :lid)'
+            'INSERT INTO course_lecturer (course_id, lecturer_id)
+             SELECT :cid1, :lid1
+              WHERE NOT EXISTS (
+                  SELECT 1 FROM course_lecturer WHERE course_id = :cid2 AND lecturer_id = :lid2
+              )'
         );
-        $stmt->execute([':cid' => $this->id, ':lid' => $lecturerId]);
+        $stmt->execute([
+            ':cid1' => $this->id,
+            ':lid1' => $lecturerId,
+            ':cid2' => $this->id,
+            ':lid2' => $lecturerId,
+        ]);
     }
 
     /**
