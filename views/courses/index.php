@@ -88,6 +88,7 @@ require __DIR__ . '/../layout/header.php';
                         <?= $dept ? htmlspecialchars($dept->name) : '<span class="text-gray-300">—</span>' ?>
                     </td>
                     <td class="px-6 py-4 text-right">
+                        <a href="/courses/<?= $course->id ?>/students" class="text-gray-600 hover:underline text-sm font-medium mr-3">Students</a>
                         <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium">Edit</a>
                     </td>
                 </tr>

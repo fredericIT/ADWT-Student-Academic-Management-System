@@ -184,6 +184,34 @@ class Course
         $stmt->execute([':cid' => $this->id, ':lid' => $lecturerId]);
     }
 
+    /**
+     * Return all enrollments for this course.
+     *
+     * @return Enrollment[]
+     */
+    public function getEnrollments(bool $activeOnly = true): array
+    {
+        return Enrollment::findByCourse($this->id, $activeOnly);
+    }
+
+    /**
+     * Return all students actively enrolled in this course.
+     *
+     * @return Student[]
+     */
+    public function getEnrolledStudents(): array
+    {
+        $enrollments = $this->getEnrollments(true);
+        $students    = [];
+        foreach ($enrollments as $enrollment) {
+            $student = $enrollment->getStudent();
+            if ($student !== null) {
+                $students[] = $student;
+            }
+        }
+        return $students;
+    }
+
     // ------------------------------------------------------------------ //
     //  Helpers
     // ------------------------------------------------------------------ //
