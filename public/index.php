@@ -25,8 +25,16 @@ use App\Router;
 use App\Controllers\DepartmentController;
 use App\Controllers\CourseController;
 use App\Controllers\LecturerController;
+use App\Controllers\EnrollmentController;
 
 $router = new Router();
+
+// --- Enrollments ---
+$router->get('/enrollments',                             [EnrollmentController::class, 'index']);
+$router->get('/enrollments/create',                      [EnrollmentController::class, 'create']);
+$router->post('/enrollments',                            [EnrollmentController::class, 'store']);
+$router->post('/enrollments/{id}/drop',                  [EnrollmentController::class, 'drop']);
+$router->get('/courses/{id}/students',                   [EnrollmentController::class, 'courseStudents']);
 
 // --- Departments ---
 $router->get('/departments',                        [DepartmentController::class, 'index']);
