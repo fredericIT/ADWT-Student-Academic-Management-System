@@ -30,7 +30,7 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
     abstract class SimpleTestCase {
         protected ?string $expectedExceptionClass = null;
         protected ?string $expectedExceptionMessage = null;
-        protected ?string $expectedExceptionMessagePattern = null;
+        protected ?string $expectedExceptionMessageRegex = null;
 
         public function expectException(string $exception): void {
             $this->expectedExceptionClass = $exception;
@@ -42,12 +42,15 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 
         public function expectExceptionMessageMatches(string $regularExpression): void {
             $this->expectedExceptionMessagePattern = $regularExpression;
+        public function expectExceptionMessageMatches(string $regex): void {
+            $this->expectedExceptionMessageRegex = $regex;
         }
 
         public function resetExpectedException(): void {
             $this->expectedExceptionClass = null;
             $this->expectedExceptionMessage = null;
             $this->expectedExceptionMessagePattern = null;
+            $this->expectedExceptionMessageRegex = null;
         }
 
         public function getExpectedExceptionClass(): ?string {
@@ -60,6 +63,8 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 
         public function getExpectedExceptionMessagePattern(): ?string {
             return $this->expectedExceptionMessagePattern;
+        public function getExpectedExceptionMessageRegex(): ?string {
+            return $this->expectedExceptionMessageRegex;
         }
 
         protected function assertSame($expected, $actual, string $msg = ''): void {
@@ -103,12 +108,13 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 }
 
 $testClasses = [
-    'Tests\StudentTest'        => __DIR__ . '/StudentTest.php',
-    'Tests\EnrollmentTest'     => __DIR__ . '/EnrollmentTest.php',
-    'Tests\CourseTest'         => __DIR__ . '/CourseTest.php',
-    'Tests\DepartmentTest'     => __DIR__ . '/DepartmentTest.php',
-    'Tests\LecturerTest'       => __DIR__ . '/LecturerTest.php',
-    'Tests\AcademicResultTest' => __DIR__ . '/AcademicResultTest.php',
+    'Tests\StudentTest'    => __DIR__ . '/StudentTest.php',
+    'Tests\EnrollmentTest' => __DIR__ . '/EnrollmentTest.php',
+    'Tests\CourseTest'     => __DIR__ . '/CourseTest.php',
+    'Tests\DepartmentTest' => __DIR__ . '/DepartmentTest.php',
+    'Tests\LecturerTest'   => __DIR__ . '/LecturerTest.php',
+    'Tests\SearchTest'     => __DIR__ . '/SearchTest.php',
+    'Tests\DashboardTest'  => __DIR__ . '/DashboardTest.php',
 ];
 
 $totalPassed = 0;
@@ -152,9 +158,9 @@ foreach ($testClasses as $className => $filePath) {
                     }
                 }
 
-                $expectedClass   = method_exists($test, 'getExpectedExceptionClass') ? $test->getExpectedExceptionClass() : null;
-                $expectedMsg     = method_exists($test, 'getExpectedExceptionMessage') ? $test->getExpectedExceptionMessage() : null;
-                $expectedPattern = method_exists($test, 'getExpectedExceptionMessagePattern') ? $test->getExpectedExceptionMessagePattern() : null;
+                $expectedClass = method_exists($test, 'getExpectedExceptionClass') ? $test->getExpectedExceptionClass() : null;
+                $expectedMsg   = method_exists($test, 'getExpectedExceptionMessage') ? $test->getExpectedExceptionMessage() : null;
+                $expectedRegex = method_exists($test, 'getExpectedExceptionMessageRegex') ? $test->getExpectedExceptionMessageRegex() : null;
 
                 if ($expectedClass !== null) {
                     if ($exceptionThrown === null) {
@@ -166,8 +172,8 @@ foreach ($testClasses as $className => $filePath) {
                     if ($expectedMsg !== null && !str_contains($exceptionThrown->getMessage(), $expectedMsg)) {
                         throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' contains '{$expectedMsg}'.");
                     }
-                    if ($expectedPattern !== null && !preg_match($expectedPattern, $exceptionThrown->getMessage())) {
-                        throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' matches pattern '{$expectedPattern}'.");
+                    if ($expectedRegex !== null && !preg_match($expectedRegex, $exceptionThrown->getMessage())) {
+                        throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' matches '{$expectedRegex}'.");
                     }
                 } elseif ($exceptionThrown !== null) {
                     throw $exceptionThrown;

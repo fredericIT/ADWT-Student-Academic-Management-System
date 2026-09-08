@@ -35,9 +35,16 @@ if (file_exists($envFile)) {
     }
 }
 
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    session_start();
+}
+
 // ── Routing ───────────────────────────────────────────────────────────────────
 
 use App\Router;
+use App\Auth\Auth;
+use App\Controllers\DashboardController;
+use App\Controllers\SearchController;
 use App\Controllers\DepartmentController;
 use App\Controllers\CourseController;
 use App\Controllers\LecturerController;
@@ -45,7 +52,23 @@ use App\Controllers\EnrollmentController;
 use App\Controllers\StudentController;
 use App\Controllers\ResultController;
 
+// Handle role switcher parameter (e.g. ?switch_role=lecturer)
+if (isset($_GET['switch_role'])) {
+    Auth::setRole((string) $_GET['switch_role']);
+    $redirectUrl = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+    header('Location: ' . ($redirectUrl ?: '/'));
+    exit;
+}
+
 $router = new Router();
+
+// --- Dashboard ---
+$router->get('/',                                        [DashboardController::class, 'index']);
+$router->get('/dashboard',                               [DashboardController::class, 'index']);
+
+// --- Global Search ---
+$router->get('/search',                                  [SearchController::class, 'index']);
+$router->get('/search/students-by-course',               [SearchController::class, 'index']);
 
 // --- Students ---
 $router->get('/students',                                [StudentController::class, 'index']);
