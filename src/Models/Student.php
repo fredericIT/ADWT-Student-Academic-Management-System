@@ -11,7 +11,7 @@ use PDO;
  * Represents a student within the academic system.
  *
  * Encapsulates database operations for the `students` table and provides
- * relationship accessors for the student's Department and Enrollments.
+ * relationship accessors for the student's Department, Address, and Enrollments.
  */
 class Student
 {
@@ -36,7 +36,7 @@ class Student
     }
 
     // ------------------------------------------------------------------ //
-    //  Static finders
+    //  Static finders & search
     // ------------------------------------------------------------------ //
 
     /**
@@ -87,6 +87,59 @@ class Student
         return $row ? self::fromRow($row) : null;
     }
 
+    /**
+     * Search students by name (first name, last name, or full name).
+     *
+     * @return Student[]
+     */
+    public static function searchByName(string $nameQuery): array
+    {
+        $term = '%' . trim($nameQuery) . '%';
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare(
+            'SELECT * FROM students
+              WHERE first_name LIKE :t1
+                 OR last_name  LIKE :t2
+                 OR CONCAT(first_name, " ", last_name) LIKE :t3
+              ORDER BY last_name, first_name'
+        );
+        $stmt->execute([':t1' => $term, ':t2' => $term, ':t3' => $term]);
+        return array_map(fn(array $row) => self::fromRow($row), $stmt->fetchAll());
+    }
+
+    /**
+     * Search students by registration ID or Name.
+     *
+     * @return Student[]
+     */
+    public static function search(string $query): array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return self::findAll();
+        }
+
+        $term = '%' . $query . '%';
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare(
+            'SELECT * FROM students
+              WHERE student_id LIKE :t1
+                 OR first_name LIKE :t2
+                 OR last_name  LIKE :t3
+                 OR CONCAT(first_name, " ", last_name) LIKE :t4
+                 OR email LIKE :t5
+              ORDER BY last_name, first_name'
+        );
+        $stmt->execute([
+            ':t1' => $term,
+            ':t2' => $term,
+            ':t3' => $term,
+            ':t4' => $term,
+            ':t5' => $term,
+        ]);
+        return array_map(fn(array $row) => self::fromRow($row), $stmt->fetchAll());
+    }
+
     // ------------------------------------------------------------------ //
     //  Write operations
     // ------------------------------------------------------------------ //
@@ -104,11 +157,11 @@ class Student
              VALUES (:student_id, :first_name, :last_name, :email, :department_id)'
         );
         $stmt->execute([
-            ':student_id'    => $data['student_id'],
-            ':first_name'    => $data['first_name'],
-            ':last_name'     => $data['last_name'],
-            ':email'         => $data['email'],
-            ':department_id' => $data['department_id'] ?? null,
+            ':student_id'    => trim($data['student_id']),
+            ':first_name'    => trim($data['first_name']),
+            ':last_name'     => trim($data['last_name']),
+            ':email'         => trim($data['email']),
+            ':department_id' => !empty($data['department_id']) ? (int) $data['department_id'] : null,
         ]);
         return self::findById((int) $pdo->lastInsertId());
     }
@@ -120,12 +173,12 @@ class Student
      */
     public function update(array $data): self
     {
-        $this->studentId    = $data['student_id']    ?? $this->studentId;
-        $this->firstName    = $data['first_name']    ?? $this->firstName;
-        $this->lastName     = $data['last_name']     ?? $this->lastName;
-        $this->email        = $data['email']         ?? $this->email;
+        $this->studentId    = isset($data['student_id']) ? trim($data['student_id']) : $this->studentId;
+        $this->firstName    = isset($data['first_name']) ? trim($data['first_name']) : $this->firstName;
+        $this->lastName     = isset($data['last_name'])  ? trim($data['last_name'])  : $this->lastName;
+        $this->email        = isset($data['email'])      ? trim($data['email'])      : $this->email;
         $this->departmentId = array_key_exists('department_id', $data)
-            ? $data['department_id']
+            ? (!empty($data['department_id']) ? (int) $data['department_id'] : null)
             : $this->departmentId;
 
         $pdo  = Connection::getInstance();
@@ -158,13 +211,36 @@ class Student
     }
 
     /**
+     * Return associated address, or null if none exists yet.
+     */
+    public function getAddress(): ?Address
+    {
+        return $this->id !== null ? Address::findByStudentId($this->id) : null;
+    }
+
+    /**
+     * Create or update address for this student.
+     *
+     * @param array{province: string, district: string, sector: string, cell: string} $addressData
+     */
+    public function saveAddress(array $addressData): Address
+    {
+        $existing = $this->getAddress();
+        if ($existing !== null) {
+            return $existing->update($addressData);
+        }
+
+        return Address::create(array_merge($addressData, ['student_id' => $this->id]));
+    }
+
+    /**
      * Return all enrollments for this student.
      *
      * @return Enrollment[]
      */
     public function getEnrollments(bool $activeOnly = false): array
     {
-        return Enrollment::findByStudent($this->id, $activeOnly);
+        return $this->id !== null ? Enrollment::findByStudent($this->id, $activeOnly) : [];
     }
 
     /**
@@ -197,7 +273,7 @@ class Student
             firstName:          $row['first_name'],
             lastName:           $row['last_name'],
             email:              $row['email'],
-            departmentId: isset($row['department_id']) ? (int) $row['department_id'] : null,
+            departmentId: isset($row['department_id']) && $row['department_id'] !== null ? (int) $row['department_id'] : null,
             createdAt:          $row['created_at']   ?? null,
             updatedAt:          $row['updated_at']   ?? null,
         );
@@ -205,6 +281,7 @@ class Student
 
     public function toArray(): array
     {
+        $address = $this->getAddress();
         return [
             'id'            => $this->id,
             'student_id'    => $this->studentId,
@@ -213,6 +290,7 @@ class Student
             'full_name'     => $this->getFullName(),
             'email'         => $this->email,
             'department_id' => $this->departmentId,
+            'address'       => $address ? $address->toArray() : null,
             'created_at'    => $this->createdAt,
             'updated_at'    => $this->updatedAt,
         ];

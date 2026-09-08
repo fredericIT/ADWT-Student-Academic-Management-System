@@ -36,8 +36,8 @@ class DepartmentTest extends TestCase
                 name        TEXT    NOT NULL UNIQUE,
                 code        TEXT    NOT NULL UNIQUE,
                 description TEXT    NULL,
-                created_at  TEXT    NOT NULL DEFAULT (datetime("now")),
-                updated_at  TEXT    NOT NULL DEFAULT (datetime("now"))
+                created_at  TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at  TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE lecturers (
                 id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,8 +45,8 @@ class DepartmentTest extends TestCase
                 last_name     TEXT    NOT NULL,
                 email         TEXT    NOT NULL UNIQUE,
                 department_id INTEGER NULL REFERENCES departments(id),
-                created_at    TEXT    NOT NULL DEFAULT (datetime("now")),
-                updated_at    TEXT    NOT NULL DEFAULT (datetime("now"))
+                created_at    TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at    TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE courses (
                 id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,13 +55,13 @@ class DepartmentTest extends TestCase
                 description   TEXT    NULL,
                 credits       INTEGER NOT NULL DEFAULT 1,
                 department_id INTEGER NULL REFERENCES departments(id),
-                created_at    TEXT    NOT NULL DEFAULT (datetime("now")),
-                updated_at    TEXT    NOT NULL DEFAULT (datetime("now"))
+                created_at    TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at    TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE course_lecturer (
                 course_id   INTEGER NOT NULL REFERENCES courses(id),
                 lecturer_id INTEGER NOT NULL REFERENCES lecturers(id),
-                assigned_at TEXT    NOT NULL DEFAULT (datetime("now")),
+                assigned_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (course_id, lecturer_id)
             );
         ');

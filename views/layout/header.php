@@ -42,6 +42,10 @@
                    class="text-blue-100 hover:text-white text-sm font-medium transition-colors">
                     Lecturers
                 </a>
+                <a href="/students"
+                   class="text-blue-100 hover:text-white text-sm font-medium transition-colors">
+                    Students
+                </a>
                 <a href="/enrollments"
                    class="text-blue-100 hover:text-white text-sm font-medium transition-colors">
                     Enrollments

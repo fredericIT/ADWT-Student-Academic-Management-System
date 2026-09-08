@@ -36,8 +36,8 @@ class EnrollmentTest extends TestCase
                 name TEXT NOT NULL UNIQUE,
                 code TEXT NOT NULL UNIQUE,
                 description TEXT NULL,
-                created_at TEXT NOT NULL DEFAULT (datetime("now")),
-                updated_at TEXT NOT NULL DEFAULT (datetime("now"))
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE courses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,8 +46,8 @@ class EnrollmentTest extends TestCase
                 description TEXT NULL,
                 credits INTEGER NOT NULL DEFAULT 1,
                 department_id INTEGER NULL REFERENCES departments(id),
-                created_at TEXT NOT NULL DEFAULT (datetime("now")),
-                updated_at TEXT NOT NULL DEFAULT (datetime("now"))
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE students (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,17 +56,17 @@ class EnrollmentTest extends TestCase
                 last_name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
                 department_id INTEGER NULL REFERENCES departments(id),
-                created_at TEXT NOT NULL DEFAULT (datetime("now")),
-                updated_at TEXT NOT NULL DEFAULT (datetime("now"))
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE enrollments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 student_id INTEGER NOT NULL REFERENCES students(id),
                 course_id INTEGER NOT NULL REFERENCES courses(id),
                 status TEXT NOT NULL DEFAULT "active",
-                enrollment_date TEXT NOT NULL DEFAULT (datetime("now")),
-                created_at TEXT NOT NULL DEFAULT (datetime("now")),
-                updated_at TEXT NOT NULL DEFAULT (datetime("now"))
+                enrollment_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         ');
 
