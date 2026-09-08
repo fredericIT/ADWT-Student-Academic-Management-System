@@ -4,7 +4,23 @@ declare(strict_types=1);
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────
 
-require_once __DIR__ . '/../vendor/autoload.php';
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    spl_autoload_register(function (string $class): void {
+        $prefix = 'App\\';
+        $baseDir = __DIR__ . '/../src/';
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            return;
+        }
+        $relative = substr($class, $len);
+        $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+        }
+    });
+}
 
 // Load .env file if it exists (simple key=value parser)
 $envFile = __DIR__ . '/../.env';
@@ -27,6 +43,7 @@ use App\Controllers\CourseController;
 use App\Controllers\LecturerController;
 use App\Controllers\EnrollmentController;
 use App\Controllers\StudentController;
+use App\Controllers\ResultController;
 
 $router = new Router();
 
@@ -71,6 +88,15 @@ $router->get('/lecturers/{id}/edit',                    [LecturerController::cla
 $router->post('/lecturers/{id}',                        [LecturerController::class, 'update']);
 $router->get('/lecturers/{id}/courses',                 [LecturerController::class, 'courses']);
 $router->post('/lecturers/{id}/associate-department',   [LecturerController::class, 'associateDepartment']);
+
+// --- Academic Results & Records ---
+$router->get('/results',                                 [ResultController::class, 'index']);
+$router->get('/results/record',                          [ResultController::class, 'record']);
+$router->post('/results/record',                         [ResultController::class, 'store']);
+$router->get('/results/{id}/edit',                       [ResultController::class, 'edit']);
+$router->post('/results/{id}',                           [ResultController::class, 'update']);
+$router->get('/students/{id}/results',                   [ResultController::class, 'studentResults']);
+$router->get('/courses/{id}/results',                    [ResultController::class, 'courseResults']);
 
 // --- Root redirect ---
 $router->get('/', function () {

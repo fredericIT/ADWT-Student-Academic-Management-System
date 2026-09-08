@@ -2,13 +2,35 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    spl_autoload_register(function (string $class): void {
+        $prefixes = [
+            'App\\'   => __DIR__ . '/../src/',
+            'Tests\\' => __DIR__ . '/../tests/',
+        ];
+        foreach ($prefixes as $prefix => $baseDir) {
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) {
+                continue;
+            }
+            $relative = substr($class, $len);
+            $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
+            if (file_exists($file)) {
+                require_once $file;
+                return;
+            }
+        }
+    });
+}
 
 // Stub PHPUnit TestCase if PHPUnit package is not installed locally
 if (!class_exists('PHPUnit\Framework\TestCase')) {
     abstract class SimpleTestCase {
         protected ?string $expectedExceptionClass = null;
         protected ?string $expectedExceptionMessage = null;
+        protected ?string $expectedExceptionMessagePattern = null;
 
         public function expectException(string $exception): void {
             $this->expectedExceptionClass = $exception;
@@ -18,9 +40,14 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
             $this->expectedExceptionMessage = $message;
         }
 
+        public function expectExceptionMessageMatches(string $regularExpression): void {
+            $this->expectedExceptionMessagePattern = $regularExpression;
+        }
+
         public function resetExpectedException(): void {
             $this->expectedExceptionClass = null;
             $this->expectedExceptionMessage = null;
+            $this->expectedExceptionMessagePattern = null;
         }
 
         public function getExpectedExceptionClass(): ?string {
@@ -29,6 +56,10 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 
         public function getExpectedExceptionMessage(): ?string {
             return $this->expectedExceptionMessage;
+        }
+
+        public function getExpectedExceptionMessagePattern(): ?string {
+            return $this->expectedExceptionMessagePattern;
         }
 
         protected function assertSame($expected, $actual, string $msg = ''): void {
@@ -72,11 +103,12 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 }
 
 $testClasses = [
-    'Tests\StudentTest'    => __DIR__ . '/StudentTest.php',
-    'Tests\EnrollmentTest' => __DIR__ . '/EnrollmentTest.php',
-    'Tests\CourseTest'     => __DIR__ . '/CourseTest.php',
-    'Tests\DepartmentTest' => __DIR__ . '/DepartmentTest.php',
-    'Tests\LecturerTest'   => __DIR__ . '/LecturerTest.php',
+    'Tests\StudentTest'        => __DIR__ . '/StudentTest.php',
+    'Tests\EnrollmentTest'     => __DIR__ . '/EnrollmentTest.php',
+    'Tests\CourseTest'         => __DIR__ . '/CourseTest.php',
+    'Tests\DepartmentTest'     => __DIR__ . '/DepartmentTest.php',
+    'Tests\LecturerTest'       => __DIR__ . '/LecturerTest.php',
+    'Tests\AcademicResultTest' => __DIR__ . '/AcademicResultTest.php',
 ];
 
 $totalPassed = 0;
@@ -102,6 +134,7 @@ foreach ($testClasses as $className => $filePath) {
         if (str_starts_with($method, 'test')) {
             try {
                 $setUp = new ReflectionMethod($test, 'setUp');
+                $setUp->setAccessible(true);
                 $setUp->invoke($test);
                 if (method_exists($test, 'resetExpectedException')) {
                     $test->resetExpectedException();
@@ -119,8 +152,9 @@ foreach ($testClasses as $className => $filePath) {
                     }
                 }
 
-                $expectedClass = method_exists($test, 'getExpectedExceptionClass') ? $test->getExpectedExceptionClass() : null;
-                $expectedMsg   = method_exists($test, 'getExpectedExceptionMessage') ? $test->getExpectedExceptionMessage() : null;
+                $expectedClass   = method_exists($test, 'getExpectedExceptionClass') ? $test->getExpectedExceptionClass() : null;
+                $expectedMsg     = method_exists($test, 'getExpectedExceptionMessage') ? $test->getExpectedExceptionMessage() : null;
+                $expectedPattern = method_exists($test, 'getExpectedExceptionMessagePattern') ? $test->getExpectedExceptionMessagePattern() : null;
 
                 if ($expectedClass !== null) {
                     if ($exceptionThrown === null) {
@@ -131,6 +165,9 @@ foreach ($testClasses as $className => $filePath) {
                     }
                     if ($expectedMsg !== null && !str_contains($exceptionThrown->getMessage(), $expectedMsg)) {
                         throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' contains '{$expectedMsg}'.");
+                    }
+                    if ($expectedPattern !== null && !preg_match($expectedPattern, $exceptionThrown->getMessage())) {
+                        throw new Exception("Failed asserting that exception message '{$exceptionThrown->getMessage()}' matches pattern '{$expectedPattern}'.");
                     }
                 } elseif ($exceptionThrown !== null) {
                     throw $exceptionThrown;

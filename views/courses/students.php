@@ -16,13 +16,22 @@ require __DIR__ . '/../layout/header.php';
             Credits: <?= $course->credits ?> | Total active students: <?= count($students) ?>
         </p>
     </div>
-    <a href="/enrollments/create?course_id=<?= $course->id ?>"
-       class="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        Enroll Student
-    </a>
+    <div class="flex gap-3">
+        <a href="/courses/<?= $course->id ?>/results"
+           class="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Grade Sheet
+        </a>
+        <a href="/enrollments/create?course_id=<?= $course->id ?>"
+           class="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Enroll Student
+        </a>
+    </div>
 </div>
 
 <?php if (empty($students)): ?>
@@ -59,9 +68,15 @@ require __DIR__ . '/../layout/header.php';
                     <td class="px-6 py-4 text-sm text-gray-500">
                         <?= $dept ? htmlspecialchars($dept->name) : '<span class="text-gray-300">—</span>' ?>
                     </td>
-                    <td class="px-6 py-4 text-right text-sm">
-                        <a href="/enrollments?student_id=<?= $st->id ?>" class="text-brand hover:underline font-medium text-xs">
-                            View Enrollments
+                    <td class="px-6 py-4 text-right text-sm space-x-3">
+                        <a href="/results/record?course_id=<?= $course->id ?>&student_id=<?= $st->id ?>" class="text-emerald-600 hover:text-emerald-800 font-medium text-xs">
+                            Record Mark
+                        </a>
+                        <a href="/students/<?= $st->id ?>/results" class="text-brand hover:underline font-medium text-xs">
+                            Results
+                        </a>
+                        <a href="/enrollments?student_id=<?= $st->id ?>" class="text-gray-500 hover:text-gray-700 font-medium text-xs">
+                            Enrollments
                         </a>
                     </td>
                 </tr>

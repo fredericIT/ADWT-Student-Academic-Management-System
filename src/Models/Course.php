@@ -16,7 +16,7 @@ use PDO;
 class Course
 {
     public function __construct(
-        public readonly ?int    $id           = null,
+        public ?int             $id           = null,
         public string           $name         = '',
         public string           $code         = '',
         public ?string          $description  = null,
@@ -219,6 +219,32 @@ class Course
             }
         }
         return $students;
+    }
+
+    /**
+     * Return all grades recorded for this course.
+     *
+     * @return Grade[]
+     */
+    public function getGrades(): array
+    {
+        return $this->id !== null ? Grade::findByCourse($this->id) : [];
+    }
+
+    /**
+     * Check if a specific lecturer is assigned to teach this course.
+     */
+    public function hasLecturer(int $lecturerId): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare(
+            'SELECT 1 FROM course_lecturer WHERE course_id = :cid AND lecturer_id = :lid LIMIT 1'
+        );
+        $stmt->execute([':cid' => $this->id, ':lid' => $lecturerId]);
+        return (bool) $stmt->fetchColumn();
     }
 
     // ------------------------------------------------------------------ //

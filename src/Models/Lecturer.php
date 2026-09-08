@@ -16,7 +16,7 @@ use PDO;
 class Lecturer
 {
     public function __construct(
-        public readonly ?int    $id           = null,
+        public ?int             $id           = null,
         public string           $firstName    = '',
         public string           $lastName     = '',
         public string           $email        = '',

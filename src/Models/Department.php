@@ -16,7 +16,7 @@ use PDO;
 class Department
 {
     public function __construct(
-        public readonly ?int    $id          = null,
+        public ?int             $id          = null,
         public string           $name        = '',
         public string           $code        = '',
         public ?string          $description = null,

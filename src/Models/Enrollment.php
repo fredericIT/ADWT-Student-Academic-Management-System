@@ -20,7 +20,7 @@ class Enrollment
     public const STATUS_DROPPED = 'dropped';
 
     public function __construct(
-        public readonly ?int    $id             = null,
+        public ?int             $id             = null,
         public int              $studentId      = 0,
         public int              $courseId       = 0,
         public string           $status         = self::STATUS_ACTIVE,

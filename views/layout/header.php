@@ -50,6 +50,10 @@
                    class="text-blue-100 hover:text-white text-sm font-medium transition-colors">
                     Enrollments
                 </a>
+                <a href="/results"
+                   class="text-blue-100 hover:text-white text-sm font-medium transition-colors">
+                    Results & Records
+                </a>
             </div>
         </div>
     </div>
@@ -61,11 +65,13 @@
 <?php
 // Display success flash message from redirect query param
 $successMessages = [
-    'created'    => 'Record created successfully.',
-    'updated'    => 'Record updated successfully.',
-    'registered' => 'Lecturer registered successfully.',
-    'enrolled'   => 'Student enrolled in course successfully.',
-    'dropped'    => 'Course dropped successfully.',
+    'created'        => 'Record created successfully.',
+    'updated'        => 'Record updated successfully.',
+    'registered'     => 'Lecturer registered successfully.',
+    'enrolled'       => 'Student enrolled in course successfully.',
+    'dropped'        => 'Course dropped successfully.',
+    'grade_recorded' => 'Academic mark recorded successfully.',
+    'grade_updated'  => 'Academic mark updated successfully.',
 ];
 $successKey = $_GET['success'] ?? '';
 if (isset($successMessages[$successKey])): ?>

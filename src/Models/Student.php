@@ -16,7 +16,7 @@ use PDO;
 class Student
 {
     public function __construct(
-        public readonly ?int    $id           = null,
+        public ?int             $id           = null,
         public string           $studentId    = '',
         public string           $firstName    = '',
         public string           $lastName     = '',
@@ -259,6 +259,24 @@ class Student
             }
         }
         return $courses;
+    }
+
+    /**
+     * Return the student's academic record, or null if not yet created.
+     */
+    public function getAcademicRecord(): ?AcademicRecord
+    {
+        return $this->id !== null ? AcademicRecord::findByStudentId($this->id) : null;
+    }
+
+    /**
+     * Return all academic grades for this student.
+     *
+     * @return Grade[]
+     */
+    public function getGrades(): array
+    {
+        return $this->id !== null ? Grade::findByStudent($this->id) : [];
     }
 
     // ------------------------------------------------------------------ //

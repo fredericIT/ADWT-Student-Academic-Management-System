@@ -15,7 +15,7 @@ use PDO;
 class Address
 {
     public function __construct(
-        public readonly ?int $id        = null,
+        public ?int    $id        = null,
         public int           $studentId = 0,
         public string        $province  = '',
         public string        $district  = '',
