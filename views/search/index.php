@@ -29,13 +29,19 @@ require __DIR__ . '/../layout/header.php';
         <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
                 <input type="text"
+                       id="search-input"
                        name="q"
                        value="<?= htmlspecialchars($query) ?>"
                        placeholder="Enter Student ID (e.g. STU2026), Student Name, or Course Code (e.g. CS101)..."
-                       class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-brand focus:border-brand shadow-sm">
+                       class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-brand focus:border-brand shadow-sm transition-all"
+                       autocomplete="off">
                 <svg class="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
+
+                <!-- Real-time search suggestions dropdown -->
+                <div id="search-suggestions" class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-96 overflow-y-auto">
+                </div>
             </div>
             <button type="submit"
                     class="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-sm transition-colors flex items-center justify-center gap-2">
