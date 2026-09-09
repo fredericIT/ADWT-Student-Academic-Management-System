@@ -31,11 +31,11 @@ require __DIR__ . '/../layout/header.php';
 </div>
 
 <!-- Filter controls -->
-<form method="GET" action="<?= $isStudent ? '/my-courses' : '/enrollments' ?>" class="mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap gap-4 items-end">
+<form method="GET" action="<?= $isStudent ? '/my-courses' : '/enrollments' ?>" class="mb-6 bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-wrap gap-4 items-end">
     <?php if (!$isStudent): ?>
         <div class="flex-1 min-w-[200px]">
-            <label for="filter_student" class="block text-xs font-semibold text-gray-600 mb-1">Filter by Student</label>
-            <select id="filter_student" name="student_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand bg-white">
+            <label for="filter_student" class="block text-sm font-semibold text-gray-700 mb-2">Filter by Student</label>
+            <select id="filter_student" name="student_id" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand bg-white font-medium">
                 <option value="">All Students</option>
                 <?php foreach ($students as $st): ?>
                     <option value="<?= $st->id ?>" <?= $selectedStudentId === $st->id ? 'selected' : '' ?>>
@@ -47,8 +47,8 @@ require __DIR__ . '/../layout/header.php';
     <?php endif; ?>
 
     <div class="flex-1 min-w-[200px]">
-        <label for="filter_course" class="block text-xs font-semibold text-gray-600 mb-1">Filter by Course</label>
-        <select id="filter_course" name="course_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand bg-white">
+        <label for="filter_course" class="block text-sm font-semibold text-gray-700 mb-2">Filter by Course</label>
+        <select id="filter_course" name="course_id" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand bg-white font-medium">
             <option value="">All Courses</option>
             <?php foreach ($courses as $co): ?>
                 <option value="<?= $co->id ?>" <?= $selectedCourseId === $co->id ? 'selected' : '' ?>>
@@ -59,11 +59,11 @@ require __DIR__ . '/../layout/header.php';
     </div>
 
     <div class="flex gap-2">
-        <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors">
+        <button type="submit" class="px-5 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-lg text-sm font-semibold transition-colors shadow-sm">
             Filter
         </button>
         <?php if ($selectedStudentId !== null || $selectedCourseId !== null): ?>
-            <a href="<?= $isStudent ? '/my-courses' : '/enrollments' ?>" class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 flex items-center">
+            <a href="<?= $isStudent ? '/my-courses' : '/enrollments' ?>" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center">
                 Clear
             </a>
         <?php endif; ?>
@@ -88,18 +88,18 @@ require __DIR__ . '/../layout/header.php';
         </a>
     </div>
 <?php else: ?>
-    <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-200 bg-white">
+    <div class="overflow-x-auto rounded-2xl shadow-sm border border-gray-200 bg-white">
         <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                 <tr>
                     <?php if (!$isStudent): ?>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
+                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Student</th>
                     <?php endif; ?>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Course</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Credits</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Enrolled Date</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Course</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Credits</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Enrolled Date</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Status</th>
+                    <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -108,46 +108,48 @@ require __DIR__ . '/../layout/header.php';
                     $course  = $enrollment->getCourse();
                     $isActive = $enrollment->isActive();
                 ?>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-brand/3 transition-colors duration-150">
                     <?php if (!$isStudent): ?>
-                        <td class="px-6 py-4 text-sm text-gray-900">
+                        <td class="px-6 py-4 text-sm">
                             <?php if ($student): ?>
-                                <div class="font-medium text-gray-900"><?= htmlspecialchars($student->getFullName()) ?></div>
-                                <div class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($student->studentId) ?></div>
+                                <div class="font-semibold text-gray-900"><?= htmlspecialchars($student->getFullName()) ?></div>
+                                <div class="text-xs text-gray-500 font-mono mt-0.5"><?= htmlspecialchars($student->studentId) ?></div>
                             <?php else: ?>
-                                <span class="text-gray-400">Unknown Student (#<?= $enrollment->studentId ?>)</span>
+                                <span class="text-gray-400 text-sm">Unknown Student (#<?= $enrollment->studentId ?>)</span>
                             <?php endif; ?>
                         </td>
                     <?php endif; ?>
-                    <td class="px-6 py-4 text-sm text-gray-900">
+                    <td class="px-6 py-4">
                         <?php if ($course): ?>
-                            <div class="font-mono font-semibold text-brand"><?= htmlspecialchars($course->code) ?></div>
-                            <div class="text-xs text-gray-600"><?= htmlspecialchars($course->name) ?></div>
+                            <div class="font-mono font-bold text-base text-brand"><?= htmlspecialchars($course->code) ?></div>
+                            <div class="text-sm text-gray-700 mt-0.5 font-medium"><?= htmlspecialchars($course->name) ?></div>
                         <?php else: ?>
-                            <span class="text-gray-400">Unknown Course (#<?= $enrollment->courseId ?>)</span>
+                            <span class="text-gray-400 text-sm">Unknown Course (#<?= $enrollment->courseId ?>)</span>
                         <?php endif; ?>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-900">
                         <?= $course ? $course->credits : '—' ?>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">
+                    <td class="px-6 py-4 text-sm text-gray-600">
                         <?= htmlspecialchars($enrollment->enrollmentDate ? date('M j, Y H:i', strtotime($enrollment->enrollmentDate)) : '—') ?>
                     </td>
                     <td class="px-6 py-4 text-sm">
                         <?php if ($isActive): ?>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Active
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-semibold text-green-800 bg-green-50 border border-green-200">
+                                <span class="flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                                <span>Active</span>
                             </span>
                         <?php else: ?>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                                Dropped
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-semibold text-gray-700 bg-gray-100 border border-gray-200">
+                                <span class="h-2.5 w-2.5 rounded-full bg-gray-400"></span>
+                                <span>Dropped</span>
                             </span>
                         <?php endif; ?>
                     </td>
                     <td class="px-6 py-4 text-right text-sm">
                         <?php if ($isActive): ?>
                             <form method="POST" action="/enrollments/<?= $enrollment->id ?>/drop" class="inline" onsubmit="return confirm('Are you sure you want to drop this course?');">
-                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium text-xs bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors">
+                                <button type="submit" class="text-red-600 hover:text-red-800 font-semibold text-sm bg-red-50 hover:bg-red-100 px-3.5 py-1.5 rounded-lg transition-all border border-red-200 hover:border-red-300">
                                     Drop Course
                                 </button>
                             </form>
