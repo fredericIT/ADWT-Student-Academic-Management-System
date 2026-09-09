@@ -26,26 +26,88 @@ class ResultController
     // GET /results[?student_id=XX&course_id=YY]
     public function index(): void
     {
-        $selectedStudentId = isset($_GET['student_id']) && $_GET['student_id'] !== ''
-            ? (int) $_GET['student_id']
-            : null;
+        $role            = \App\Auth\Auth::getRole();
+        $isStudent       = \App\Auth\Auth::isStudent();
+        $isLecturer      = \App\Auth\Auth::isLecturer();
+        $currentStudent  = null;
+        $currentLecturer = null;
+        $studentRecord    = null;
 
-        $selectedCourseId = isset($_GET['course_id']) && $_GET['course_id'] !== ''
-            ? (int) $_GET['course_id']
-            : null;
+        if ($isStudent) {
+            $studentId      = \App\Auth\Auth::getStudentId() ?? 1;
+            $currentStudent = Student::findById($studentId) ?? (Student::findAll()[0] ?? null);
+            if ($currentStudent) {
+                $studentId     = $currentStudent->id;
+                $studentRecord = $this->service->getStudentResults($studentId);
+                $grades        = $studentRecord->getGrades();
+            } else {
+                $grades = [];
+            }
+            $stats             = [];
+            $students          = [];
+            $courses           = [];
+            $lecturers         = [];
+            $selectedStudentId = $currentStudent ? $currentStudent->id : null;
+            $selectedCourseId  = null;
+        } elseif ($isLecturer) {
+            $lecturerId        = \App\Auth\Auth::getLecturerId() ?? 1;
+            $currentLecturer   = Lecturer::findById($lecturerId) ?? (Lecturer::findAll()[0] ?? null);
+            $assignedCourses   = $currentLecturer ? $currentLecturer->getCourses() : [];
+            $assignedCourseIds = array_map(fn($c) => $c->id, $assignedCourses);
 
-        if ($selectedStudentId !== null) {
-            $grades = $this->service->getStudentGrades($selectedStudentId);
-        } elseif ($selectedCourseId !== null) {
-            $grades = $this->service->getCourseGrades($selectedCourseId);
+            $selectedCourseId  = isset($_GET['course_id']) && $_GET['course_id'] !== ''
+                ? (int) $_GET['course_id']
+                : null;
+
+            if ($selectedCourseId !== null && in_array($selectedCourseId, $assignedCourseIds, true)) {
+                $grades = $this->service->getCourseGrades($selectedCourseId);
+            } else {
+                $allGrades = $this->service->getAllGrades();
+                $grades    = array_values(array_filter($allGrades, fn(Grade $g) => in_array($g->courseId, $assignedCourseIds, true)));
+            }
+
+            $total    = count($grades);
+            $passed   = count(array_filter($grades, fn(Grade $g) => $g->isPass()));
+            $sum      = array_reduce($grades, fn($acc, Grade $g) => $acc + $g->mark, 0.0);
+            $avg      = $total > 0 ? round($sum / $total, 2) : 0.0;
+            $passRate = $total > 0 ? round(($passed / $total) * 100, 1) : 0.0;
+
+            $stats = [
+                'total_grades'   => $total,
+                'passed_count'   => $passed,
+                'failed_count'   => $total - $passed,
+                'average_mark'   => $avg,
+                'pass_rate'      => $passRate,
+                'assigned_count' => count($assignedCourses),
+            ];
+
+            $students          = Student::findAll();
+            $courses           = $assignedCourses;
+            $lecturers         = $currentLecturer ? [$currentLecturer] : [];
+            $selectedStudentId = null;
         } else {
-            $grades = $this->service->getAllGrades();
-        }
+            // Administrator: complete institutional oversight
+            $selectedStudentId = isset($_GET['student_id']) && $_GET['student_id'] !== ''
+                ? (int) $_GET['student_id']
+                : null;
 
-        $stats       = $this->service->getStatistics();
-        $students    = Student::findAll();
-        $courses     = Course::findAll();
-        $lecturers   = Lecturer::findAll();
+            $selectedCourseId = isset($_GET['course_id']) && $_GET['course_id'] !== ''
+                ? (int) $_GET['course_id']
+                : null;
+
+            if ($selectedStudentId !== null) {
+                $grades = $this->service->getStudentGrades($selectedStudentId);
+            } elseif ($selectedCourseId !== null) {
+                $grades = $this->service->getCourseGrades($selectedCourseId);
+            } else {
+                $grades = $this->service->getAllGrades();
+            }
+
+            $stats     = $this->service->getStatistics();
+            $students  = Student::findAll();
+            $courses   = Course::findAll();
+            $lecturers = Lecturer::findAll();
+        }
 
         require __DIR__ . '/../../views/results/index.php';
     }
@@ -53,13 +115,23 @@ class ResultController
     // GET /results/record[?course_id=XX&student_id=YY&lecturer_id=ZZ]
     public function record(): void
     {
+        $isLecturer      = \App\Auth\Auth::isLecturer();
+        $currentLecturer = null;
+
+        if ($isLecturer) {
+            $lecturerId         = \App\Auth\Auth::getLecturerId() ?? 1;
+            $currentLecturer    = Lecturer::findById($lecturerId) ?? (Lecturer::findAll()[0] ?? null);
+            $selectedLecturerId = $currentLecturer ? $currentLecturer->id : $lecturerId;
+            $courses            = $currentLecturer ? $currentLecturer->getCourses() : [];
+        } else {
+            $selectedLecturerId = isset($_GET['lecturer_id']) && $_GET['lecturer_id'] !== '' ? (int) $_GET['lecturer_id'] : null;
+            $courses            = Course::findAll();
+        }
+
         $errors            = [];
         $selectedCourseId  = isset($_GET['course_id']) && $_GET['course_id'] !== '' ? (int) $_GET['course_id'] : null;
         $selectedStudentId = isset($_GET['student_id']) && $_GET['student_id'] !== '' ? (int) $_GET['student_id'] : null;
-        $selectedLecturerId= isset($_GET['lecturer_id']) && $_GET['lecturer_id'] !== '' ? (int) $_GET['lecturer_id'] : null;
-
-        $courses   = Course::findAll();
-        $lecturers = Lecturer::findAll();
+        $lecturers         = $isLecturer && $currentLecturer ? [$currentLecturer] : Lecturer::findAll();
 
         $enrolledStudents = [];
         if ($selectedCourseId !== null) {
@@ -75,20 +147,31 @@ class ResultController
     // POST /results/record
     public function store(): void
     {
+        $isLecturer      = \App\Auth\Auth::isLecturer();
+        $currentLecturer = null;
+
+        if ($isLecturer) {
+            $lecturerId      = \App\Auth\Auth::getLecturerId() ?? 1;
+            $currentLecturer = Lecturer::findById($lecturerId) ?? (Lecturer::findAll()[0] ?? null);
+            $lecturerId      = $currentLecturer ? $currentLecturer->id : $lecturerId;
+            $courses         = $currentLecturer ? $currentLecturer->getCourses() : [];
+        } else {
+            $lecturerId = !empty($_POST['lecturer_id']) ? (int) $_POST['lecturer_id'] : null;
+            $courses    = Course::findAll();
+        }
+
         $studentId  = (int) ($_POST['student_id'] ?? 0);
         $courseId   = (int) ($_POST['course_id'] ?? 0);
         $markInput  = trim((string) ($_POST['mark'] ?? ''));
-        $lecturerId = !empty($_POST['lecturer_id']) ? (int) $_POST['lecturer_id'] : null;
         $remarks    = !empty($_POST['remarks']) ? trim((string) $_POST['remarks']) : null;
 
         if ($markInput === '' || !is_numeric($markInput)) {
-            $errors            = ['Invalid mark. Mark must be a valid number between 0 and 100.'];
-            $selectedCourseId  = $courseId ?: null;
-            $selectedStudentId = $studentId ?: null;
-            $selectedLecturerId= $lecturerId ?: null;
-            $courses           = Course::findAll();
-            $lecturers         = Lecturer::findAll();
-            $enrolledStudents  = $courseId ? (Course::findById($courseId)?->getEnrolledStudents() ?? []) : [];
+            $errors             = ['Invalid mark. Mark must be a valid number between 0 and 100.'];
+            $selectedCourseId   = $courseId ?: null;
+            $selectedStudentId  = $studentId ?: null;
+            $selectedLecturerId = $lecturerId ?: null;
+            $lecturers          = $isLecturer && $currentLecturer ? [$currentLecturer] : Lecturer::findAll();
+            $enrolledStudents   = $courseId ? (Course::findById($courseId)?->getEnrolledStudents() ?? []) : [];
             require __DIR__ . '/../../views/results/record.php';
             return;
         }
@@ -97,15 +180,14 @@ class ResultController
 
         try {
             $this->service->recordMark($studentId, $courseId, $mark, $lecturerId, $remarks);
-            $this->redirect('/results?success=grade_recorded');
+            $this->redirect('/results?success=grade_recorded' . ($courseId ? '&course_id=' . $courseId : ''));
         } catch (InvalidArgumentException $e) {
-            $errors            = [$e->getMessage()];
-            $selectedCourseId  = $courseId ?: null;
-            $selectedStudentId = $studentId ?: null;
-            $selectedLecturerId= $lecturerId ?: null;
-            $courses           = Course::findAll();
-            $lecturers         = Lecturer::findAll();
-            $enrolledStudents  = $courseId ? (Course::findById($courseId)?->getEnrolledStudents() ?? []) : [];
+            $errors             = [$e->getMessage()];
+            $selectedCourseId   = $courseId ?: null;
+            $selectedStudentId  = $studentId ?: null;
+            $selectedLecturerId = $lecturerId ?: null;
+            $lecturers          = $isLecturer && $currentLecturer ? [$currentLecturer] : Lecturer::findAll();
+            $enrolledStudents   = $courseId ? (Course::findById($courseId)?->getEnrolledStudents() ?? []) : [];
             require __DIR__ . '/../../views/results/record.php';
         }
     }
