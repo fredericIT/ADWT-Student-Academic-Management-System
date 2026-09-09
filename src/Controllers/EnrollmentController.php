@@ -44,6 +44,20 @@ class EnrollmentController
         require __DIR__ . '/../../views/enrollments/index.php';
     }
 
+    // GET /my-courses
+    public function myCourses(): void
+    {
+        $studentId         = \App\Auth\Auth::getStudentId() ?? 1;
+        $enrollments       = Enrollment::findByStudent($studentId);
+        $student           = Student::findById($studentId);
+        $students          = Student::findAll();
+        $courses           = Course::findAll();
+        $selectedStudentId = $studentId;
+        $selectedCourseId  = null;
+
+        require __DIR__ . '/../../views/enrollments/index.php';
+    }
+
     // GET /enrollments/create
     public function create(): void
     {

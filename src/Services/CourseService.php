@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Lecturer;
 use App\Validator;
 use App\Database\Connection;
+use App\Exceptions\CourseNotFoundException;
 use InvalidArgumentException;
 
 /**
@@ -73,7 +74,7 @@ class CourseService
         $lecturer = Lecturer::findById($lecturerId);
 
         if (!$course) {
-            throw new InvalidArgumentException("Course with ID {$courseId} not found.");
+            throw new CourseNotFoundException("Course with ID {$courseId} not found.");
         }
         if (!$lecturer) {
             throw new InvalidArgumentException("Lecturer with ID {$lecturerId} not found.");
@@ -91,7 +92,7 @@ class CourseService
     {
         $course = Course::findById($courseId);
         if (!$course) {
-            throw new InvalidArgumentException("Course with ID {$courseId} not found.");
+            throw new CourseNotFoundException("Course with ID {$courseId} not found.");
         }
         $course->removeLecturer($lecturerId);
     }

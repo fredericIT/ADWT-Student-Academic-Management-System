@@ -10,6 +10,10 @@ use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Lecturer;
 use App\Models\Student;
+use App\Exceptions\InvalidMarkException;
+use App\Exceptions\StudentNotFoundException;
+use App\Exceptions\CourseNotFoundException;
+use App\Exceptions\UnauthorizedActionException;
 use InvalidArgumentException;
 
 /**
@@ -38,19 +42,19 @@ class AcademicService
     ): Grade {
         // Validate mark range
         if (!Grade::isValidMark($mark)) {
-            throw new InvalidArgumentException('Invalid mark. Mark must be within the allowed range.');
+            throw new InvalidMarkException('Invalid mark. Mark must be within the allowed range.');
         }
 
         // Verify student existence
         $student = Student::findById($studentId);
         if (!$student) {
-            throw new InvalidArgumentException('Student record not found.');
+            throw new StudentNotFoundException('Student record not found.');
         }
 
         // Verify course existence
         $course = Course::findById($courseId);
         if (!$course) {
-            throw new InvalidArgumentException('Course not found.');
+            throw new CourseNotFoundException('Course not found.');
         }
 
         // Verify enrollment (student must have an active enrollment in this course)
@@ -250,7 +254,7 @@ class AcademicService
         }
 
         if (!$course->hasLecturer($lecturerId)) {
-            throw new InvalidArgumentException('You are not authorized to update this result.');
+            throw new UnauthorizedActionException('You are not authorized to update this result.');
         }
     }
 }

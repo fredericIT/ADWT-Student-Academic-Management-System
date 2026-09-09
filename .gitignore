@@ -1,2 +1,5 @@
 /vendor/
 .env
+*.sqlite
+*.sqlite3
+database/database.sqlite

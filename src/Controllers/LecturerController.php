@@ -81,6 +81,15 @@ class LecturerController
         require __DIR__ . '/../../views/lecturers/courses.php';
     }
 
+    // GET /my-assigned-courses
+    public function myCourses(): void
+    {
+        $lecturerId = \App\Auth\Auth::getLecturerId() ?? 1;
+        $lecturer   = $this->requireLecturer($lecturerId);
+        $courses    = $lecturer->getCourses();
+        require __DIR__ . '/../../views/lecturers/courses.php';
+    }
+
     // POST /lecturers/{id}/associate-department
     public function associateDepartment(string $id): void
     {

@@ -40,8 +40,6 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
             $this->expectedExceptionMessage = $message;
         }
 
-        public function expectExceptionMessageMatches(string $regularExpression): void {
-            $this->expectedExceptionMessagePattern = $regularExpression;
         public function expectExceptionMessageMatches(string $regex): void {
             $this->expectedExceptionMessageRegex = $regex;
         }
@@ -49,7 +47,6 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
         public function resetExpectedException(): void {
             $this->expectedExceptionClass = null;
             $this->expectedExceptionMessage = null;
-            $this->expectedExceptionMessagePattern = null;
             $this->expectedExceptionMessageRegex = null;
         }
 
@@ -61,8 +58,6 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
             return $this->expectedExceptionMessage;
         }
 
-        public function getExpectedExceptionMessagePattern(): ?string {
-            return $this->expectedExceptionMessagePattern;
         public function getExpectedExceptionMessageRegex(): ?string {
             return $this->expectedExceptionMessageRegex;
         }
@@ -108,13 +103,15 @@ if (!class_exists('PHPUnit\Framework\TestCase')) {
 }
 
 $testClasses = [
-    'Tests\StudentTest'    => __DIR__ . '/StudentTest.php',
-    'Tests\EnrollmentTest' => __DIR__ . '/EnrollmentTest.php',
-    'Tests\CourseTest'     => __DIR__ . '/CourseTest.php',
-    'Tests\DepartmentTest' => __DIR__ . '/DepartmentTest.php',
-    'Tests\LecturerTest'   => __DIR__ . '/LecturerTest.php',
-    'Tests\SearchTest'     => __DIR__ . '/SearchTest.php',
-    'Tests\DashboardTest'  => __DIR__ . '/DashboardTest.php',
+    'Tests\StudentTest'        => __DIR__ . '/StudentTest.php',
+    'Tests\EnrollmentTest'     => __DIR__ . '/EnrollmentTest.php',
+    'Tests\CourseTest'         => __DIR__ . '/CourseTest.php',
+    'Tests\DepartmentTest'     => __DIR__ . '/DepartmentTest.php',
+    'Tests\LecturerTest'       => __DIR__ . '/LecturerTest.php',
+    'Tests\AcademicResultTest' => __DIR__ . '/AcademicResultTest.php',
+    'Tests\SearchTest'         => __DIR__ . '/SearchTest.php',
+    'Tests\DashboardTest'      => __DIR__ . '/DashboardTest.php',
+    'Tests\AuthTest'           => __DIR__ . '/AuthTest.php',
 ];
 
 $totalPassed = 0;

@@ -88,6 +88,28 @@ class StudentController
             $departments = Department::findAll();
             require __DIR__ . '/../../views/students/edit.php';
         }
+    // GET or POST /profile
+    public function profile(): void
+    {
+        $studentId = \App\Auth\Auth::getStudentId() ?? 1;
+        $student   = $this->requireStudent($studentId);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $this->service->updateStudent($student, $_POST);
+                $this->redirect('/profile?success=updated');
+            } catch (\Exception $e) {
+                $errors      = [$e->getMessage()];
+                $address     = $student->getAddress();
+                $departments = Department::findAll();
+                require __DIR__ . '/../../views/students/edit.php';
+                return;
+            }
+        }
+
+        $address     = $student->getAddress();
+        $enrollments = $student->getEnrollments();
+        require __DIR__ . '/../../views/students/show.php';
     }
 
     // ------------------------------------------------------------------ //
