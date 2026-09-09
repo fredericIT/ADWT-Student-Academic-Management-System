@@ -9,6 +9,8 @@ use App\Models\Address;
 use App\Models\Department;
 use App\Validator;
 use App\Database\Connection;
+use App\Exceptions\DuplicateStudentException;
+use App\Exceptions\StudentNotFoundException;
 use InvalidArgumentException;
 use Exception;
 
@@ -227,13 +229,13 @@ class StudentService
         $sidStmt = $pdo->prepare($sidSql);
         $sidStmt->execute(array_merge([':sid' => $studentId], $params));
         if ($sidStmt->fetch()) {
-            throw new InvalidArgumentException("A student with Registration ID \"{$studentId}\" already exists.");
+            throw new DuplicateStudentException("A student with Registration ID \"{$studentId}\" already exists.");
         }
 
         $emailStmt = $pdo->prepare($emailSql);
         $emailStmt->execute(array_merge([':email' => $email], $params));
         if ($emailStmt->fetch()) {
-            throw new InvalidArgumentException("A student with Email address \"{$email}\" already exists.");
+            throw new DuplicateStudentException("A student with Email address \"{$email}\" already exists.");
         }
     }
 }

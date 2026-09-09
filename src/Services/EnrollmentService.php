@@ -7,6 +7,9 @@ namespace App\Services;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Student;
+use App\Exceptions\DuplicateEnrollmentException;
+use App\Exceptions\StudentNotFoundException;
+use App\Exceptions\CourseNotFoundException;
 use InvalidArgumentException;
 
 /**
@@ -26,18 +29,18 @@ class EnrollmentService
     {
         $student = Student::findById($studentId);
         if (!$student) {
-            throw new InvalidArgumentException("Student with ID {$studentId} not found.");
+            throw new StudentNotFoundException("Student with ID {$studentId} not found.");
         }
 
         $course = Course::findById($courseId);
         if (!$course) {
-            throw new InvalidArgumentException("Course with ID {$courseId} not found.");
+            throw new CourseNotFoundException("Course with ID {$courseId} not found.");
         }
 
         $existing = Enrollment::findByStudentAndCourse($studentId, $courseId);
         if ($existing !== null) {
             if ($existing->isActive()) {
-                throw new InvalidArgumentException('Student is already enrolled in this course.');
+                throw new DuplicateEnrollmentException('Student is already enrolled in this course.');
             }
             return $existing->reactivate();
         }

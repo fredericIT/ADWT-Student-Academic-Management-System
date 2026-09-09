@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Database\Connection;
+use App\Interfaces\SearchableInterface;
 use PDO;
 
 /**
  * Represents a student within the academic system.
+ * Inherits from abstract User base class.
  *
  * Encapsulates database operations for the `students` table and provides
  * relationship accessors for the student's Department, Address, and Enrollments.
  */
-class Student
+class Student extends User implements SearchableInterface
 {
     public function __construct(
         public ?int             $id           = null,
@@ -24,7 +26,44 @@ class Student
         public ?int             $departmentId = null,
         public ?string          $createdAt    = null,
         public ?string          $updatedAt    = null,
-    ) {}
+    ) {
+        parent::__construct(
+            id: $id,
+            username: $studentId,
+            email: $email,
+            passwordHash: '',
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
+        );
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Polymorphic role implementation
+    // ------------------------------------------------------------------ //
+
+    public function getRole(): string
+    {
+        return 'student';
+    }
+
+    // ------------------------------------------------------------------ //
+    //  SearchableInterface implementation
+    // ------------------------------------------------------------------ //
+
+    public function getSearchTitle(): string
+    {
+        return "{$this->getFullName()} ({$this->studentId})";
+    }
+
+    public function getSearchSubtitle(): string
+    {
+        return $this->email;
+    }
+
+    public function getSearchUrl(): string
+    {
+        return "/students/{$this->id}";
+    }
 
     // ------------------------------------------------------------------ //
     //  Computed properties

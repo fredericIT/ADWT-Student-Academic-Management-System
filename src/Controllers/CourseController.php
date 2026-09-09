@@ -31,6 +31,33 @@ class CourseController
 
         $courses     = $this->service->getAll();
         $departments = Department::findAll();
+
+        $isStudent  = \App\Auth\Auth::isStudent();
+        $isLecturer = \App\Auth\Auth::isLecturer();
+        $isAdmin    = \App\Auth\Auth::isAdmin();
+
+        $enrolledCourseIds = [];
+        if ($isStudent) {
+            $studentId = \App\Auth\Auth::getStudentId() ?? 1;
+            $student   = \App\Models\Student::findById($studentId) ?? (\App\Models\Student::findAll()[0] ?? null);
+            if ($student) {
+                foreach ($student->getCourses() as $c) {
+                    $enrolledCourseIds[$c->id] = true;
+                }
+            }
+        }
+
+        $assignedCourseIds = [];
+        if ($isLecturer) {
+            $lecturerId = \App\Auth\Auth::getLecturerId() ?? 1;
+            $lecturer   = \App\Models\Lecturer::findById($lecturerId) ?? (\App\Models\Lecturer::findAll()[0] ?? null);
+            if ($lecturer) {
+                foreach ($lecturer->getCourses() as $c) {
+                    $assignedCourseIds[$c->id] = true;
+                }
+            }
+        }
+
         require __DIR__ . '/../../views/courses/index.php';
     }
 

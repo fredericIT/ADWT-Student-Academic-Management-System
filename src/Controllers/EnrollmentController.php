@@ -44,14 +44,53 @@ class EnrollmentController
         require __DIR__ . '/../../views/enrollments/index.php';
     }
 
+    // GET /my-courses
+    public function myCourses(): void
+    {
+        $studentId         = \App\Auth\Auth::getStudentId() ?? 1;
+        $enrollments       = Enrollment::findByStudent($studentId);
+        $student           = Student::findById($studentId);
+        $students          = Student::findAll();
+        $courses           = Course::findAll();
+        $selectedStudentId = $studentId;
+        $selectedCourseId  = null;
+
+        require __DIR__ . '/../../views/enrollments/index.php';
+    }
+
     // GET /enrollments/create
     public function create(): void
     {
-        $errors            = [];
-        $students          = Student::findAll();
-        $courses           = Course::findAll();
-        $selectedStudentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-        $selectedCourseId  = isset($_GET['course_id'])  ? (int) $_GET['course_id']  : null;
+        $errors          = [];
+        $students        = Student::findAll();
+        $courses         = Course::findAll();
+        $isStudent       = \App\Auth\Auth::isStudent();
+        $currentStudent  = null;
+        $activeCourseIds = [];
+
+        if ($isStudent) {
+            $studentId = \App\Auth\Auth::getStudentId();
+            if ($studentId) {
+                $currentStudent = Student::findById($studentId);
+            }
+            if (!$currentStudent && !empty($students)) {
+                $currentStudent = $students[0];
+            }
+            if ($currentStudent) {
+                $selectedStudentId = $currentStudent->id;
+                foreach (Enrollment::findByStudent($currentStudent->id) as $ae) {
+                    if ($ae->isActive()) {
+                        $activeCourseIds[] = $ae->courseId;
+                    }
+                }
+            } else {
+                $selectedStudentId = null;
+            }
+        } else {
+            $selectedStudentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
+        }
+
+        $selectedCourseId = isset($_GET['course_id']) ? (int) $_GET['course_id'] : null;
 
         require __DIR__ . '/../../views/enrollments/create.php';
     }
@@ -59,16 +98,45 @@ class EnrollmentController
     // POST /enrollments
     public function store(): void
     {
-        $studentId = (int) ($_POST['student_id'] ?? 0);
-        $courseId  = (int) ($_POST['course_id'] ?? 0);
+        $isStudent = \App\Auth\Auth::isStudent();
+        if ($isStudent) {
+            $studentId = \App\Auth\Auth::getStudentId();
+            if (!$studentId && isset($_POST['student_id'])) {
+                $studentId = (int) $_POST['student_id'];
+            }
+            if (!$studentId) {
+                $first = Student::findAll()[0] ?? null;
+                $studentId = $first ? $first->id : 0;
+            }
+        } else {
+            $studentId = (int) ($_POST['student_id'] ?? 0);
+        }
+
+        $courseId = (int) ($_POST['course_id'] ?? 0);
 
         try {
             $this->service->enroll($studentId, $courseId);
-            $this->redirect('/enrollments?success=enrolled');
+            if ($isStudent) {
+                $this->redirect('/my-courses?success=enrolled');
+            } else {
+                $this->redirect('/enrollments?success=enrolled');
+            }
         } catch (InvalidArgumentException $e) {
-            $errors            = [$e->getMessage()];
-            $students          = Student::findAll();
-            $courses           = Course::findAll();
+            $errors          = [$e->getMessage()];
+            $students        = Student::findAll();
+            $courses         = Course::findAll();
+            $currentStudent  = null;
+            $activeCourseIds = [];
+            if ($isStudent && $studentId) {
+                $currentStudent = Student::findById($studentId);
+                if ($currentStudent) {
+                    foreach (Enrollment::findByStudent($currentStudent->id) as $ae) {
+                        if ($ae->isActive()) {
+                            $activeCourseIds[] = $ae->courseId;
+                        }
+                    }
+                }
+            }
             $selectedStudentId = $studentId ?: null;
             $selectedCourseId  = $courseId  ?: null;
 
@@ -79,7 +147,8 @@ class EnrollmentController
     // POST /enrollments/{id}/drop
     public function drop(string $id): void
     {
-        $isJson = isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json');
+        $isJson    = isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json');
+        $isStudent = \App\Auth\Auth::isStudent();
 
         try {
             $this->service->drop((int) $id);
@@ -88,7 +157,7 @@ class EnrollmentController
                 echo json_encode(['success' => true, 'message' => 'Course dropped successfully.']);
                 return;
             }
-            $this->redirect('/enrollments?success=dropped');
+            $this->redirect(($isStudent ? '/my-courses' : '/enrollments') . '?success=dropped');
         } catch (InvalidArgumentException $e) {
             if ($isJson) {
                 http_response_code(422);
@@ -96,7 +165,7 @@ class EnrollmentController
                 echo json_encode(['success' => false, 'message' => $e->getMessage()]);
                 return;
             }
-            $this->redirect('/enrollments?error=' . urlencode($e->getMessage()));
+            $this->redirect(($isStudent ? '/my-courses' : '/enrollments') . '?error=' . urlencode($e->getMessage()));
         }
     }
 

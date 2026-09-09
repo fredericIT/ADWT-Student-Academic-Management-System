@@ -91,21 +91,37 @@ require __DIR__ . '/../layout/header.php';
             </div>
 
             <!-- 4. Recording Lecturer (Authorization) -->
-            <div>
-                <label for="lecturer_id" class="block text-sm font-medium text-gray-700 mb-1">
-                    Recording Lecturer
-                </label>
-                <select name="lecturer_id" id="lecturer_id"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-brand focus:border-brand">
-                    <option value="">-- System / Admin --</option>
-                    <?php foreach ($lecturers as $lec): ?>
-                        <option value="<?= $lec->id ?>" <?= $selectedLecturerId === $lec->id ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($lec->getFullName()) ?> (<?= htmlspecialchars($lec->email) ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <p class="text-xs text-gray-400 mt-1">If specified, the lecturer must be assigned to this course.</p>
-            </div>
+            <?php if (!empty($isLecturer) && !empty($currentLecturer)): ?>
+                <input type="hidden" name="lecturer_id" value="<?= $currentLecturer->id ?>">
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                    <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Grading Faculty Member</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                            <?= strtoupper(substr($currentLecturer->firstName, 0, 1) . substr($currentLecturer->lastName, 0, 1)) ?>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900 text-sm"><?= htmlspecialchars($currentLecturer->getFullName()) ?></div>
+                            <div class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($currentLecturer->staffNumber ?? $currentLecturer->email) ?> &bull; Authorized Instructor</div>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div>
+                    <label for="lecturer_id" class="block text-sm font-medium text-gray-700 mb-1">
+                        Recording Lecturer
+                    </label>
+                    <select name="lecturer_id" id="lecturer_id"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-brand focus:border-brand">
+                        <option value="">-- System / Admin --</option>
+                        <?php foreach ($lecturers as $lec): ?>
+                            <option value="<?= $lec->id ?>" <?= $selectedLecturerId === $lec->id ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($lec->getFullName()) ?> (<?= htmlspecialchars($lec->email) ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">If specified, the lecturer must be assigned to this course.</p>
+                </div>
+            <?php endif; ?>
 
             <!-- 5. Remarks -->
             <div>

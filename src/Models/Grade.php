@@ -283,17 +283,30 @@ class Grade
 
     public static function fromRow(array $row): self
     {
+        $mark        = (float) ($row['mark'] ?? 0.0);
+        $letterGrade = (string) ($row['letter_grade'] ?? $row['grade_letter'] ?? self::calculateLetterGrade($mark));
+        $status      = (string) ($row['status'] ?? self::determineStatus($mark));
+
+        $studentId   = (int) ($row['student_id'] ?? 0);
+        $recordId    = (int) ($row['academic_record_id'] ?? 0);
+        if ($studentId === 0 && $recordId > 0) {
+            $ar = AcademicRecord::findById($recordId);
+            if ($ar !== null) {
+                $studentId = (int) $ar->studentId;
+            }
+        }
+
         return new self(
             id:               (int) $row['id'],
-            academicRecordId: (int) $row['academic_record_id'],
-            studentId:        (int) $row['student_id'],
+            academicRecordId: $recordId,
+            studentId:        $studentId,
             courseId:         (int) $row['course_id'],
             lecturerId:       isset($row['lecturer_id']) && $row['lecturer_id'] !== null ? (int) $row['lecturer_id'] : null,
-            mark:             (float) $row['mark'],
-            letterGrade:      (string) $row['letter_grade'],
-            status:           (string) $row['status'],
+            mark:             $mark,
+            letterGrade:      $letterGrade,
+            status:           $status,
             remarks:          $row['remarks'] ?? null,
-            createdAt:        $row['created_at'] ?? null,
+            createdAt:        $row['created_at'] ?? $row['recorded_at'] ?? null,
             updatedAt:        $row['updated_at'] ?? null,
         );
     }

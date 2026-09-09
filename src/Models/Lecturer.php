@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Database\Connection;
+use App\Interfaces\SearchableInterface;
 use PDO;
 
 /**
  * Represents a lecturer (faculty member).
+ * Inherits from abstract User base class.
  *
  * Encapsulates database operations for the `lecturers` table and provides
  * relationship accessors for the associated Department and assigned Courses.
  */
-class Lecturer
+class Lecturer extends User implements SearchableInterface
 {
     public function __construct(
         public ?int             $id           = null,
@@ -23,7 +25,44 @@ class Lecturer
         public ?int             $departmentId = null,
         public ?string          $createdAt    = null,
         public ?string          $updatedAt    = null,
-    ) {}
+    ) {
+        parent::__construct(
+            id: $id,
+            username: $email,
+            email: $email,
+            passwordHash: '',
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
+        );
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Polymorphic role implementation
+    // ------------------------------------------------------------------ //
+
+    public function getRole(): string
+    {
+        return 'lecturer';
+    }
+
+    // ------------------------------------------------------------------ //
+    //  SearchableInterface implementation
+    // ------------------------------------------------------------------ //
+
+    public function getSearchTitle(): string
+    {
+        return $this->getFullName();
+    }
+
+    public function getSearchSubtitle(): string
+    {
+        return $this->email;
+    }
+
+    public function getSearchUrl(): string
+    {
+        return "/lecturers/{$this->id}";
+    }
 
     // ------------------------------------------------------------------ //
     //  Computed properties

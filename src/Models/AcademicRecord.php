@@ -75,6 +75,37 @@ class AcademicRecord
     }
 
     /**
+     * Calculate cumulative GPA on a 4.0 scale weighted by course credit hours.
+     * Scale: A = 4.0, B = 3.0, C = 2.0, D = 1.0, F = 0.0.
+     */
+    public function calculateGPA(): float
+    {
+        $grades = $this->getGrades();
+        if (empty($grades)) {
+            return 0.0;
+        }
+
+        $totalPoints  = 0.0;
+        $totalCredits = 0;
+
+        foreach ($grades as $grade) {
+            $course  = $grade->getCourse();
+            $credits = $course ? max(1, $course->credits) : 1;
+            $gpaPoints = match ($grade->letterGrade) {
+                'A'     => 4.0,
+                'B'     => 3.0,
+                'C'     => 2.0,
+                'D'     => 1.0,
+                default => 0.0,
+            };
+            $totalPoints  += $gpaPoints * $credits;
+            $totalCredits += $credits;
+        }
+
+        return $totalCredits > 0 ? round($totalPoints / $totalCredits, 2) : 0.0;
+    }
+
+    /**
      * Determine the overall academic pass/fail status.
      * Evaluates whether the student's arithmetic average meets the PASS_MARK threshold.
      */
@@ -86,6 +117,14 @@ class AcademicRecord
         }
 
         return $this->calculateAverage() >= Grade::PASS_MARK ? Grade::STATUS_PASS : Grade::STATUS_FAIL;
+    }
+
+    /**
+     * Alias for getOverallStatus() matching class design specifications.
+     */
+    public function determineOverallStatus(): string
+    {
+        return $this->getOverallStatus();
     }
 
     /**
