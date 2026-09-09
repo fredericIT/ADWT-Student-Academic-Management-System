@@ -4,41 +4,51 @@
 /** @var \App\Models\Course[] $courses */
 /** @var int|null $selectedStudentId */
 /** @var int|null $selectedCourseId */
-$pageTitle = 'Course Enrollments';
+
+use App\Auth\Auth;
+
+$isStudent = Auth::isStudent();
+$pageTitle = $isStudent ? 'My Registered Courses' : 'Course Enrollments';
 require __DIR__ . '/../layout/header.php';
 ?>
 
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Course Enrollments</h1>
-        <p class="text-sm text-gray-500 mt-1">Manage student course registrations and view enrollment statuses.</p>
+        <h1 class="text-2xl font-bold text-gray-900"><?= $isStudent ? 'My Registered Courses' : 'Course Enrollments' ?></h1>
+        <p class="text-sm text-gray-500 mt-1">
+            <?= $isStudent
+                ? 'View your active registered courses, earned credits, and register for new offerings.'
+                : 'Manage student course registrations and view enrollment statuses.' ?>
+        </p>
     </div>
     <a href="/enrollments/create"
-       class="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors">
+       class="inline-flex items-center gap-2 bg-brand text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-dark shadow-sm transition-all self-start sm:self-auto">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Register for Course
+        <?= $isStudent ? 'Register for Course' : 'Enroll Student' ?>
     </a>
 </div>
 
 <!-- Filter controls -->
-<form method="GET" action="/enrollments" class="mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap gap-4 items-end">
-    <div class="flex-1 min-w-[200px]">
-        <label for="filter_student" class="block text-xs font-semibold text-gray-600 mb-1">Filter by Student</label>
-        <select id="filter_student" name="student_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand">
-            <option value="">All Students</option>
-            <?php foreach ($students as $st): ?>
-                <option value="<?= $st->id ?>" <?= $selectedStudentId === $st->id ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($st->studentId . ' — ' . $st->getFullName()) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
+<form method="GET" action="<?= $isStudent ? '/my-courses' : '/enrollments' ?>" class="mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap gap-4 items-end">
+    <?php if (!$isStudent): ?>
+        <div class="flex-1 min-w-[200px]">
+            <label for="filter_student" class="block text-xs font-semibold text-gray-600 mb-1">Filter by Student</label>
+            <select id="filter_student" name="student_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand bg-white">
+                <option value="">All Students</option>
+                <?php foreach ($students as $st): ?>
+                    <option value="<?= $st->id ?>" <?= $selectedStudentId === $st->id ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($st->studentId . ' — ' . $st->getFullName()) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    <?php endif; ?>
 
     <div class="flex-1 min-w-[200px]">
         <label for="filter_course" class="block text-xs font-semibold text-gray-600 mb-1">Filter by Course</label>
-        <select id="filter_course" name="course_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand">
+        <select id="filter_course" name="course_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand bg-white">
             <option value="">All Courses</option>
             <?php foreach ($courses as $co): ?>
                 <option value="<?= $co->id ?>" <?= $selectedCourseId === $co->id ? 'selected' : '' ?>>
@@ -53,7 +63,7 @@ require __DIR__ . '/../layout/header.php';
             Filter
         </button>
         <?php if ($selectedStudentId !== null || $selectedCourseId !== null): ?>
-            <a href="/enrollments" class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 flex items-center">
+            <a href="<?= $isStudent ? '/my-courses' : '/enrollments' ?>" class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 flex items-center">
                 Clear
             </a>
         <?php endif; ?>
@@ -66,10 +76,15 @@ require __DIR__ . '/../layout/header.php';
         <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
         </svg>
-        <p class="text-lg font-medium text-gray-600">No enrollments found.</p>
-        <p class="text-sm text-gray-400 mt-1">Get started by registering students into courses.</p>
-        <a href="/enrollments/create" class="mt-4 inline-block text-brand font-medium hover:underline">
-            Enroll a student now →
+        <p class="text-lg font-medium text-gray-600">
+            <?= $isStudent ? 'You are not enrolled in any courses yet.' : 'No enrollments found.' ?>
+        </p>
+        <p class="text-sm text-gray-400 mt-1">
+            <?= $isStudent ? 'Select and register for courses to build your semester schedule.' : 'Get started by registering students into courses.' ?>
+        </p>
+        <a href="/enrollments/create" class="mt-4 inline-flex items-center gap-1.5 text-brand font-semibold hover:underline text-sm">
+            <span><?= $isStudent ? 'Register for your first course now' : 'Enroll a student now' ?></span>
+            <span>→</span>
         </a>
     </div>
 <?php else: ?>
@@ -77,7 +92,9 @@ require __DIR__ . '/../layout/header.php';
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
+                    <?php if (!$isStudent): ?>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
+                    <?php endif; ?>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Course</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Credits</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Enrolled Date</th>
@@ -92,14 +109,16 @@ require __DIR__ . '/../layout/header.php';
                     $isActive = $enrollment->isActive();
                 ?>
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 text-sm text-gray-900">
-                        <?php if ($student): ?>
-                            <div class="font-medium text-gray-900"><?= htmlspecialchars($student->getFullName()) ?></div>
-                            <div class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($student->studentId) ?></div>
-                        <?php else: ?>
-                            <span class="text-gray-400">Unknown Student (#<?= $enrollment->studentId ?>)</span>
-                        <?php endif; ?>
-                    </td>
+                    <?php if (!$isStudent): ?>
+                        <td class="px-6 py-4 text-sm text-gray-900">
+                            <?php if ($student): ?>
+                                <div class="font-medium text-gray-900"><?= htmlspecialchars($student->getFullName()) ?></div>
+                                <div class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($student->studentId) ?></div>
+                            <?php else: ?>
+                                <span class="text-gray-400">Unknown Student (#<?= $enrollment->studentId ?>)</span>
+                            <?php endif; ?>
+                        </td>
+                    <?php endif; ?>
                     <td class="px-6 py-4 text-sm text-gray-900">
                         <?php if ($course): ?>
                             <div class="font-mono font-semibold text-brand"><?= htmlspecialchars($course->code) ?></div>
