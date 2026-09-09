@@ -140,12 +140,14 @@ require __DIR__ . '/../layout/header.php';
                                     </td>
                                     <td class="px-6 py-4">
                                         <?php if ($e->isActive()): ?>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                                Active
+                                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold bg-green-50 text-green-800 border border-green-200">
+                                                <span class="flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                                                <span>Active</span>
                                             </span>
                                         <?php else: ?>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
-                                                <?= htmlspecialchars(ucfirst($e->status)) ?>
+                                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                                                <span class="h-2.5 w-2.5 rounded-full bg-gray-400"></span>
+                                                <span><?= htmlspecialchars(ucfirst($e->status)) ?></span>
                                             </span>
                                         <?php endif; ?>
                                     </td>

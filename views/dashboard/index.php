@@ -311,12 +311,14 @@ $role = Auth::getRole();
                                 </td>
                                 <td class="px-5 py-3">
                                     <?php if ($enrollment->isActive()): ?>
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                            Active
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-800 border border-green-200">
+                                            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                                            <span>Active</span>
                                         </span>
                                     <?php else: ?>
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-600 border border-gray-200">
-                                            Dropped
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                                            <span class="h-2 w-2 rounded-full bg-gray-400"></span>
+                                            <span>Dropped</span>
                                         </span>
                                     <?php endif; ?>
                                 </td>

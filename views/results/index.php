@@ -148,8 +148,13 @@ require __DIR__ . '/../layout/header.php';
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <?= $isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
-                                        <?= htmlspecialchars($g->status) ?>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold <?= $isPass ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200' ?>">
+                                        <?php if ($isPass): ?>
+                                            <span class="flex h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                        <?php else: ?>
+                                            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                        <?php endif; ?>
+                                        <span><?= htmlspecialchars($g->status) ?></span>
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
@@ -307,8 +312,13 @@ require __DIR__ . '/../layout/header.php';
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <?= $isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
-                                        <?= htmlspecialchars($grade->status) ?>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold <?= $isPass ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200' ?>">
+                                        <?php if ($isPass): ?>
+                                            <span class="flex h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                        <?php else: ?>
+                                            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                        <?php endif; ?>
+                                        <span><?= htmlspecialchars($grade->status) ?></span>
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm">
