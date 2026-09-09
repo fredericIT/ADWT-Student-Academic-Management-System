@@ -270,6 +270,15 @@ class ResultController
         require __DIR__ . '/../../views/results/course.php';
     }
 
+    // POST /results/{id}/delete
+    public function destroy(string $id): void
+    {
+        $this->requireAdmin();
+        $grade = $this->requireGrade((int) $id);
+        $this->service->deleteGrade($grade);
+        $this->redirect('/results?success=deleted');
+    }
+
     // ------------------------------------------------------------------ //
     //  Helpers
     // ------------------------------------------------------------------ //
@@ -282,6 +291,14 @@ class ResultController
             exit('<h1>Grade record not found.</h1>');
         }
         return $grade;
+    }
+
+    private function requireAdmin(): void
+    {
+        if (!\App\Auth\Auth::isAdmin()) {
+            http_response_code(403);
+            exit('<h1>Access denied.</h1>');
+        }
     }
 
     private function redirect(string $path): void

@@ -49,11 +49,16 @@ require __DIR__ . '/../layout/header.php';
                         <?php endif; ?>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end gap-3 items-center">
                             <a href="/lecturers/<?= $lec->id ?>/courses"
                                class="text-gray-500 hover:text-brand text-sm font-medium">Courses</a>
                             <a href="/lecturers/<?= $lec->id ?>/edit"
                                class="text-brand hover:underline text-sm font-medium">Edit</a>
+                            <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                <form method="POST" action="/lecturers/<?= $lec->id ?>/delete" class="inline" onsubmit="return confirm('Delete this lecturer? This action cannot be undone.');">
+                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

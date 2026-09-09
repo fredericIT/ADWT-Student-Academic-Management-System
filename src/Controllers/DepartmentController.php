@@ -84,6 +84,15 @@ class DepartmentController
         require __DIR__ . '/../../views/departments/lecturers.php';
     }
 
+    // POST /departments/{id}/delete
+    public function destroy(string $id): void
+    {
+        $this->requireAdmin();
+        $department = $this->requireDepartment((int) $id);
+        $this->service->delete($department);
+        $this->redirect('/departments?success=deleted');
+    }
+
     // ------------------------------------------------------------------ //
     //  Helpers
     // ------------------------------------------------------------------ //
@@ -96,6 +105,14 @@ class DepartmentController
             exit('<h1>Department not found.</h1>');
         }
         return $department;
+    }
+
+    private function requireAdmin(): void
+    {
+        if (!\App\Auth\Auth::isAdmin()) {
+            http_response_code(403);
+            exit('<h1>Access denied.</h1>');
+        }
     }
 
     private function redirect(string $path): void

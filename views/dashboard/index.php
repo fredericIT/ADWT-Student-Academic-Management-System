@@ -226,21 +226,21 @@ $role = Auth::getRole();
 <!-- 2-Column Feed: Recent Students & Recent Enrollments -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
     <!-- Recent Students Table -->
-    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200/60 shadow-sm overflow-hidden flex flex-col">
-        <div class="p-5 border-b border-blue-100/50 flex items-center justify-between bg-gradient-to-r from-blue-100/40 to-indigo-100/40">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-5 border-b border-gray-100 flex items-center justify-between">
             <div>
-                <h3 class="font-bold text-blue-900 text-sm">Recent Student Registrations</h3>
-                <p class="text-xs text-blue-700">Newly added student profiles</p>
+                <h3 class="font-bold text-gray-900 text-sm">Recent Student Registrations</h3>
+                <p class="text-xs text-gray-500">Newly added student profiles</p>
             </div>
-            <a href="/students" class="text-xs font-semibold text-blue-700 hover:text-blue-900 hover:underline">View All →</a>
+            <a href="/students" class="text-xs font-semibold text-brand hover:underline">View All →</a>
         </div>
 
         <div class="overflow-x-auto flex-1">
             <?php if (empty($recentStudents)): ?>
-                <div class="p-8 text-center text-blue-400 text-xs">No students registered yet.</div>
+                <div class="p-8 text-center text-gray-400 text-xs">No students registered yet.</div>
             <?php else: ?>
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-blue-100/40 border-b border-blue-200/50 text-blue-900 uppercase font-semibold">
+                    <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase font-semibold">
                         <tr>
                             <th class="px-5 py-3">Student ID</th>
                             <th class="px-5 py-3">Name</th>
@@ -252,18 +252,18 @@ $role = Auth::getRole();
                         <?php foreach ($recentStudents as $st):
                             $dept = $st->getDepartment();
                         ?>
-                            <tr class="hover:bg-blue-100/30 transition-colors border-b border-blue-100/30">
-                                <td class="px-5 py-3 font-mono font-semibold text-blue-700">
+                            <tr class="hover:bg-gray-50/80 transition-colors">
+                                <td class="px-5 py-3 font-mono font-semibold text-brand">
                                     <?= htmlspecialchars($st->studentId) ?>
                                 </td>
                                 <td class="px-5 py-3 font-medium text-gray-900">
                                     <?= htmlspecialchars($st->getFullName()) ?>
                                 </td>
-                                <td class="px-5 py-3 text-gray-600">
+                                <td class="px-5 py-3 text-gray-500">
                                     <?= $dept ? htmlspecialchars($dept->code) : '—' ?>
                                 </td>
                                 <td class="px-5 py-3 text-right">
-                                    <a href="/students/<?= $st->id ?>" class="text-blue-700 hover:text-blue-900 hover:underline font-medium">Profile</a>
+                                    <a href="/students/<?= $st->id ?>" class="text-brand hover:underline font-medium">Profile</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -274,21 +274,21 @@ $role = Auth::getRole();
     </div>
 
     <!-- Recent Enrollments Table -->
-    <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl border border-emerald-200/60 shadow-sm overflow-hidden flex flex-col">
-        <div class="p-5 border-b border-emerald-100/50 flex items-center justify-between bg-gradient-to-r from-emerald-100/40 to-green-100/40">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-5 border-b border-gray-100 flex items-center justify-between">
             <div>
-                <h3 class="font-bold text-emerald-900 text-sm">Recent Course Enrollments</h3>
-                <p class="text-xs text-emerald-700">Latest course registrations and status</p>
+                <h3 class="font-bold text-gray-900 text-sm">Recent Course Enrollments</h3>
+                <p class="text-xs text-gray-500">Latest course registrations and status</p>
             </div>
-            <a href="/enrollments" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:underline">View All →</a>
+            <a href="/enrollments" class="text-xs font-semibold text-brand hover:underline">View All →</a>
         </div>
 
         <div class="overflow-x-auto flex-1">
             <?php if (empty($recentEnrollments)): ?>
-                <div class="p-8 text-center text-emerald-400 text-xs">No course enrollments recorded yet.</div>
+                <div class="p-8 text-center text-gray-400 text-xs">No course enrollments recorded yet.</div>
             <?php else: ?>
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-emerald-100/40 border-b border-emerald-200/50 text-emerald-900 uppercase font-semibold">
+                    <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase font-semibold">
                         <tr>
                             <th class="px-5 py-3">Student</th>
                             <th class="px-5 py-3">Course</th>
@@ -302,17 +302,17 @@ $role = Auth::getRole();
                             $st         = $item['student'];
                             $cr         = $item['course'];
                         ?>
-                            <tr class="hover:bg-emerald-100/30 transition-colors border-b border-emerald-100/30">
+                            <tr class="hover:bg-gray-50/80 transition-colors">
                                 <td class="px-5 py-3 font-medium text-gray-900">
-                                    <?= $st ? htmlspecialchars($st->getFullName()) : '<span class="text-emerald-400">Unknown</span>' ?>
+                                    <?= $st ? htmlspecialchars($st->getFullName()) : '<span class="text-gray-400">Unknown</span>' ?>
                                 </td>
                                 <td class="px-5 py-3 text-gray-600 font-mono">
                                     <?= $cr ? htmlspecialchars($cr->code) : '—' ?>
                                 </td>
                                 <td class="px-5 py-3">
                                     <?php if ($enrollment->isActive()): ?>
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300">
-                                            <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-800 border border-green-200">
+                                            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
                                             <span>Active</span>
                                         </span>
                                     <?php else: ?>
@@ -322,7 +322,7 @@ $role = Auth::getRole();
                                         </span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-5 py-3 text-right text-emerald-700 font-medium">
+                                <td class="px-5 py-3 text-right text-gray-400">
                                     <?= substr($enrollment->enrollmentDate ?? '', 0, 10) ?>
                                 </td>
                             </tr>
@@ -337,30 +337,30 @@ $role = Auth::getRole();
 <!-- Department Overview & Course Roster Cards -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Departments Breakdown -->
-    <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl border border-purple-200/60 shadow-sm p-5">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h3 class="font-bold text-purple-900 text-sm">Department Overview</h3>
-                <p class="text-xs text-purple-700">Academic units and resource allocations</p>
+                <h3 class="font-bold text-gray-900 text-sm">Department Overview</h3>
+                <p class="text-xs text-gray-500">Academic units and resource allocations</p>
             </div>
-            <a href="/departments" class="text-xs font-semibold text-purple-700 hover:text-purple-900 hover:underline">All Departments →</a>
+            <a href="/departments" class="text-xs font-semibold text-brand hover:underline">All Departments →</a>
         </div>
         <div class="space-y-3">
             <?php if (empty($departmentBreakdown)): ?>
-                <p class="text-purple-400 text-xs py-4 text-center">No departments found.</p>
+                <p class="text-gray-400 text-xs py-4 text-center">No departments found.</p>
             <?php else: ?>
                 <?php foreach ($departmentBreakdown as $dItem):
                     $dept = $dItem['department'];
                 ?>
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-purple-100/30 border border-purple-200/50 hover:bg-purple-100/50 transition-colors">
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-blue-50/40 transition-colors">
                         <div>
-                            <span class="font-bold text-purple-900 text-xs"><?= htmlspecialchars($dept->name) ?></span>
-                            <span class="ml-1.5 px-1.5 py-0.5 rounded bg-purple-200/60 text-purple-800 font-mono text-[10px] font-bold"><?= htmlspecialchars($dept->code) ?></span>
+                            <span class="font-bold text-gray-900 text-xs"><?= htmlspecialchars($dept->name) ?></span>
+                            <span class="ml-1.5 px-1.5 py-0.5 rounded bg-blue-100 text-brand font-mono text-[10px] font-bold"><?= htmlspecialchars($dept->code) ?></span>
                         </div>
-                        <div class="flex items-center gap-4 text-xs text-purple-700">
-                            <span><strong class="text-purple-900"><?= $dItem['course_count'] ?></strong> Courses</span>
-                            <span><strong class="text-purple-900"><?= $dItem['lecturer_count'] ?></strong> Lecturers</span>
-                            <a href="/departments/<?= $dept->id ?>/courses" class="text-purple-700 hover:text-purple-900 hover:underline text-xs font-medium">Courses</a>
+                        <div class="flex items-center gap-4 text-xs text-gray-500">
+                            <span><strong class="text-gray-800"><?= $dItem['course_count'] ?></strong> Courses</span>
+                            <span><strong class="text-gray-800"><?= $dItem['lecturer_count'] ?></strong> Lecturers</span>
+                            <a href="/departments/<?= $dept->id ?>/courses" class="text-brand hover:underline text-xs font-medium">Courses</a>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -369,34 +369,34 @@ $role = Auth::getRole();
     </div>
 
     <!-- Course Enrollment Density -->
-    <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border border-orange-200/60 shadow-sm p-5">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h3 class="font-bold text-orange-900 text-sm">Active Course Enrollments</h3>
-                <p class="text-xs text-orange-700">Courses with student registration rosters</p>
+                <h3 class="font-bold text-gray-900 text-sm">Active Course Enrollments</h3>
+                <p class="text-xs text-gray-500">Courses with student registration rosters</p>
             </div>
-            <a href="/courses" class="text-xs font-semibold text-orange-700 hover:text-orange-900 hover:underline">All Courses →</a>
+            <a href="/courses" class="text-xs font-semibold text-brand hover:underline">All Courses →</a>
         </div>
         <div class="space-y-3">
             <?php if (empty($courseSummary)): ?>
-                <p class="text-orange-400 text-xs py-4 text-center">No courses found.</p>
+                <p class="text-gray-400 text-xs py-4 text-center">No courses found.</p>
             <?php else: ?>
                 <?php foreach ($courseSummary as $cItem):
                     $course = $cItem['course'];
                     $dept   = $cItem['department'];
                 ?>
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-orange-100/30 border border-orange-200/50 hover:bg-orange-100/50 transition-colors">
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-emerald-50/30 transition-colors">
                         <div>
-                            <span class="font-mono font-bold text-orange-700 text-xs"><?= htmlspecialchars($course->code) ?></span>
-                            <span class="ml-1 text-orange-900 text-xs font-medium"><?= htmlspecialchars($course->name) ?></span>
-                            <span class="text-orange-600 text-[10px] ml-1">(<?= $course->credits ?> credits)</span>
+                            <span class="font-mono font-bold text-brand text-xs"><?= htmlspecialchars($course->code) ?></span>
+                            <span class="ml-1 text-gray-800 text-xs font-medium"><?= htmlspecialchars($course->name) ?></span>
+                            <span class="text-gray-400 text-[10px] ml-1">(<?= $course->credits ?> credits)</span>
                         </div>
                         <div class="flex items-center gap-3 text-xs">
-                            <span class="inline-flex items-center gap-1 text-orange-700 bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-200 font-medium">
-                                <strong class="text-orange-900"><?= $cItem['enrolled_count'] ?></strong> students
+                            <span class="inline-flex items-center gap-1 text-gray-600 bg-white px-2 py-0.5 rounded border border-gray-200">
+                                <strong class="text-gray-900"><?= $cItem['enrolled_count'] ?></strong> students
                             </span>
                             <a href="/courses/<?= $course->id ?>/students"
-                               class="text-orange-700 hover:text-orange-900 hover:underline font-semibold text-xs">
+                               class="text-brand hover:underline font-semibold text-xs">
                                 Roster →
                             </a>
                         </div>

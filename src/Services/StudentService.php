@@ -208,6 +208,13 @@ class StudentService
         return Student::search($query);
     }
 
+    public function delete(Student $student): bool
+    {
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM students WHERE id = :id');
+        return $stmt->execute([':id' => $student->id]);
+    }
+
     // ------------------------------------------------------------------ //
     //  Private Helpers
     // ------------------------------------------------------------------ //

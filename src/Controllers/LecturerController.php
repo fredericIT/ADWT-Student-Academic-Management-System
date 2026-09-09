@@ -105,6 +105,15 @@ class LecturerController
         }
     }
 
+    // POST /lecturers/{id}/delete
+    public function destroy(string $id): void
+    {
+        $this->requireAdmin();
+        $lecturer = $this->requireLecturer((int) $id);
+        $this->service->delete($lecturer);
+        $this->redirect('/lecturers?success=deleted');
+    }
+
     // ------------------------------------------------------------------ //
     //  Helpers
     // ------------------------------------------------------------------ //
@@ -117,6 +126,14 @@ class LecturerController
             exit('<h1>Lecturer not found.</h1>');
         }
         return $lecturer;
+    }
+
+    private function requireAdmin(): void
+    {
+        if (!\App\Auth\Auth::isAdmin()) {
+            http_response_code(403);
+            exit('<h1>Access denied.</h1>');
+        }
     }
 
     private function redirect(string $path): void

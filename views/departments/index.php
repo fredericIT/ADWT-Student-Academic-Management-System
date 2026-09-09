@@ -44,13 +44,18 @@ require __DIR__ . '/../layout/header.php';
                         <?= htmlspecialchars($dept->description ?? '—') ?>
                     </td>
                     <td class="px-6 py-4 text-right text-sm">
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end gap-3 items-center">
                             <a href="/departments/<?= $dept->id ?>/courses"
                                class="text-gray-500 hover:text-brand font-medium">Courses</a>
                             <a href="/departments/<?= $dept->id ?>/lecturers"
                                class="text-gray-500 hover:text-brand font-medium">Lecturers</a>
                             <a href="/departments/<?= $dept->id ?>/edit"
                                class="text-brand hover:underline font-medium">Edit</a>
+                            <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                <form method="POST" action="/departments/<?= $dept->id ?>/delete" class="inline" onsubmit="return confirm('Delete this department? This action cannot be undone.');">
+                                    <button type="submit" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

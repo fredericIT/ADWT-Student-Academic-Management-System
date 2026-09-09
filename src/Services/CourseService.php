@@ -97,6 +97,13 @@ class CourseService
         $course->removeLecturer($lecturerId);
     }
 
+    public function delete(Course $course): bool
+    {
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM courses WHERE id = :id');
+        return $stmt->execute([':id' => $course->id]);
+    }
+
     // ------------------------------------------------------------------ //
     //  Query helpers
     // ------------------------------------------------------------------ //

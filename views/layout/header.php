@@ -179,6 +179,7 @@ $successMessages = [
     'grade_recorded' => 'Academic mark recorded successfully.',
     'grade_updated'  => 'Academic mark updated successfully.',
     'login'          => 'Welcome back! You have signed in successfully.',
+    'deleted'        => 'Record deleted successfully.',
 ];
 $successKey = $_GET['success'] ?? '';
 if (isset($successMessages[$successKey])): ?>

@@ -94,6 +94,13 @@ class DepartmentService
         return Department::findById($id);
     }
 
+    public function delete(Department $department): bool
+    {
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM departments WHERE id = :id');
+        return $stmt->execute([':id' => $department->id]);
+    }
+
     // ------------------------------------------------------------------ //
     //  Private helpers
     // ------------------------------------------------------------------ //

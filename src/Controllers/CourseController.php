@@ -141,6 +141,15 @@ class CourseController
         }
     }
 
+    // POST /courses/{id}/delete
+    public function destroy(string $id): void
+    {
+        $this->requireAdmin();
+        $course = $this->requireCourse((int) $id);
+        $this->service->delete($course);
+        $this->redirect('/courses?success=deleted');
+    }
+
     // ------------------------------------------------------------------ //
     //  Helpers
     // ------------------------------------------------------------------ //
@@ -153,6 +162,14 @@ class CourseController
             exit('<h1>Course not found.</h1>');
         }
         return $course;
+    }
+
+    private function requireAdmin(): void
+    {
+        if (!\App\Auth\Auth::isAdmin()) {
+            http_response_code(403);
+            exit('<h1>Access denied.</h1>');
+        }
     }
 
     private function setJsonHeaders(): void

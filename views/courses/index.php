@@ -99,6 +99,11 @@ require __DIR__ . '/../layout/header.php';
                     <?php else: ?>
                         <a href="/courses/<?= $searchResult->id ?>/students" class="text-gray-600 hover:underline text-sm font-medium mr-3">Students</a>
                         <a href="/courses/<?= $searchResult->id ?>/edit" class="text-brand hover:underline text-sm font-medium">Edit</a>
+                        <?php if (\App\Auth\Auth::isAdmin()): ?>
+                            <form method="POST" action="/courses/<?= $searchResult->id ?>/delete" class="inline ml-3" onsubmit="return confirm('Delete this course? This action cannot be undone.');">
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                            </form>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -181,6 +186,11 @@ require __DIR__ . '/../layout/header.php';
                         <?php else: ?>
                             <a href="/courses/<?= $course->id ?>/students" class="text-gray-600 hover:underline text-sm font-medium mr-3">Students</a>
                             <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium">Edit</a>
+                            <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                <form method="POST" action="/courses/<?= $course->id ?>/delete" class="inline ml-3" onsubmit="return confirm('Delete this course? This action cannot be undone.');">
+                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                                </form>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>

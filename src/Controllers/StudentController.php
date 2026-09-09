@@ -90,6 +90,15 @@ class StudentController
         }
     }
 
+    // POST /students/{id}/delete
+    public function destroy(string $id): void
+    {
+        $this->requireAdmin();
+        $student = $this->requireStudent((int) $id);
+        $this->service->delete($student);
+        $this->redirect('/students?success=deleted');
+    }
+
     // GET or POST /profile
     public function profile(): void
     {
@@ -126,6 +135,14 @@ class StudentController
             exit('<h1>Student not found.</h1>');
         }
         return $student;
+    }
+
+    private function requireAdmin(): void
+    {
+        if (!\App\Auth\Auth::isAdmin()) {
+            http_response_code(403);
+            exit('<h1>Admin access required.</h1>');
+        }
     }
 
     private function redirect(string $path): void

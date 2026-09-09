@@ -87,6 +87,13 @@ class LecturerService
         return Lecturer::findById($id);
     }
 
+    public function delete(Lecturer $lecturer): bool
+    {
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM lecturers WHERE id = :id');
+        return $stmt->execute([':id' => $lecturer->id]);
+    }
+
     // ------------------------------------------------------------------ //
     //  Private helpers
     // ------------------------------------------------------------------ //

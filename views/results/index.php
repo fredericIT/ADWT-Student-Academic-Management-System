@@ -292,6 +292,7 @@ require __DIR__ . '/../layout/header.php';
                             <?php foreach ($grades as $grade):
                                 $student = $grade->getStudent();
                                 $course  = $grade->getCourse();
+                                $lecturer = $grade->getLecturer();
                                 $isPass  = $grade->isPass();
                             ?>
                             <tr class="hover:bg-gray-50 transition-colors">
@@ -322,10 +323,16 @@ require __DIR__ . '/../layout/header.php';
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm">
-                                    <a href="/results/<?= $grade->id ?>/edit"
-                                       class="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:text-brand-dark bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
-                                        Edit Mark
-                                    </a>
+                                    <div class="flex justify-end gap-2 items-center">
+                                        <a href="/results/<?= $grade->id ?>/edit" class="text-brand hover:underline font-medium text-xs">
+                                            Edit Mark
+                                        </a>
+                                        <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                            <form method="POST" action="/results/<?= $grade->id ?>/delete" class="inline" onsubmit="return confirm('Delete this result record? This action cannot be undone.');">
+                                                <button type="submit" class="text-red-600 hover:text-red-800 font-medium text-xs">Delete</button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -496,9 +503,16 @@ require __DIR__ . '/../layout/header.php';
                                 <?= htmlspecialchars($lecturer ? $lecturer->getFullName() : '—') ?>
                             </td>
                             <td class="px-6 py-4 text-right text-sm">
-                                <a href="/results/<?= $grade->id ?>/edit" class="text-brand hover:underline font-medium text-xs">
-                                    Edit Mark
-                                </a>
+                                <div class="flex justify-end gap-2 items-center">
+                                    <a href="/results/<?= $grade->id ?>/edit" class="text-brand hover:underline font-medium text-xs">
+                                        Edit Mark
+                                    </a>
+                                    <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                        <form method="POST" action="/results/<?= $grade->id ?>/delete" class="inline" onsubmit="return confirm('Delete this result record? This action cannot be undone.');">
+                                            <button type="submit" class="text-red-600 hover:text-red-800 font-medium text-xs">Delete</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

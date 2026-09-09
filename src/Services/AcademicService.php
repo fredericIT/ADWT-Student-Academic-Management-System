@@ -213,6 +213,11 @@ class AcademicService
         return Grade::findAll();
     }
 
+    public function deleteGrade(Grade $grade): bool
+    {
+        return $grade->delete();
+    }
+
     /**
      * Compute high-level academic statistics across the system.
      *

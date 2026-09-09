@@ -112,6 +112,13 @@ require __DIR__ . '/../layout/header.php';
                                    class="font-medium text-gray-600 hover:text-gray-900">
                                     Edit
                                 </a>
+                                <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                    <form method="POST" action="/students/<?= $s->id ?>/delete" class="inline" onsubmit="return confirm('Delete this student? This action cannot be undone.');">
+                                        <button type="submit" class="font-medium text-red-600 hover:text-red-800">
+                                            Delete
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
