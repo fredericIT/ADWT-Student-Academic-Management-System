@@ -53,13 +53,6 @@ use App\Controllers\EnrollmentController;
 use App\Controllers\StudentController;
 use App\Controllers\ResultController;
 
-// Handle role switcher parameter (e.g. ?switch_role=lecturer)
-if (isset($_GET['switch_role'])) {
-    Auth::setRole((string) $_GET['switch_role']);
-    $redirectUrl = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
-    header('Location: ' . ($redirectUrl ?: '/'));
-    exit;
-}
 
 // Auth guard: redirect unauthenticated requests to /login
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';

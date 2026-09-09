@@ -126,19 +126,8 @@ $navClass = function (string $target, bool $exact = false) use ($isNavActive): s
                     </svg>
                 </form>
 
-                <!-- Role Switcher Pill for Demo -->
-                <div class="flex items-center bg-blue-800/60 rounded-lg p-1 border border-blue-500/50 text-xs">
-                    <span class="text-blue-200 px-1.5 font-medium hidden lg:inline">Role:</span>
-                    <select onchange="window.location.href='?switch_role=' + this.value"
-                            class="bg-blue-900 text-white font-medium rounded px-2 py-0.5 text-xs border border-blue-600 focus:outline-none focus:ring-1 focus:ring-white cursor-pointer">
-                        <option value="administrator" <?= $currentRole === 'administrator' ? 'selected' : '' ?>>Admin</option>
-                        <option value="lecturer" <?= $currentRole === 'lecturer' ? 'selected' : '' ?>>Lecturer</option>
-                        <option value="student" <?= $currentRole === 'student' ? 'selected' : '' ?>>Student</option>
-                    </select>
-                </div>
-
                 <!-- User Profile & Logout -->
-                <div class="flex items-center gap-2 pl-2 border-l border-blue-600/50">
+                <div class="flex items-center gap-2">
                     <span class="text-white text-xs font-semibold hidden md:inline">
                         <?= htmlspecialchars($displayName) ?>
                     </span>
