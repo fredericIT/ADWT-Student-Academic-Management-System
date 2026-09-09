@@ -142,6 +142,22 @@ class AcademicService
     }
 
     /**
+     * Retrieve a student's complete academic record with all aggregated grades.
+     * Accepts either the integer database primary key or the string student registration ID.
+     */
+    public function getStudentResults(int|string $studentId): AcademicRecord
+    {
+        if (is_string($studentId) && !ctype_digit($studentId)) {
+            $student = Student::findByStudentId($studentId);
+            $id = $student ? $student->id : 0;
+        } else {
+            $id = (int) $studentId;
+        }
+
+        return $this->getOrCreateAcademicRecord($id);
+    }
+
+    /**
      * Return all grades recorded for a student.
      *
      * @return Grade[]
