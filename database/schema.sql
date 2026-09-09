@@ -107,15 +107,20 @@ CREATE TABLE IF NOT EXISTS academic_records (
 CREATE TABLE IF NOT EXISTS grades (
     id                 INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     academic_record_id INT UNSIGNED NOT NULL,
+    student_id         INT UNSIGNED NOT NULL,
     course_id          INT UNSIGNED NOT NULL,
     lecturer_id        INT UNSIGNED NULL,
     mark               DECIMAL(5,2) NOT NULL,
-    grade_letter       VARCHAR(2)   NOT NULL,
-    recorded_at        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    letter_grade       VARCHAR(5)   NOT NULL,
+    status             VARCHAR(20)  NOT NULL DEFAULT 'PASS',
+    remarks            TEXT         NULL,
+    created_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT uq_grade_record_course UNIQUE (academic_record_id, course_id),
+    CONSTRAINT uq_grades_student_course UNIQUE (student_id, course_id),
     CONSTRAINT fk_grades_record FOREIGN KEY (academic_record_id)
         REFERENCES academic_records (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_grades_student FOREIGN KEY (student_id)
+        REFERENCES students (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_grades_course FOREIGN KEY (course_id)
         REFERENCES courses (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_grades_lecturer FOREIGN KEY (lecturer_id)

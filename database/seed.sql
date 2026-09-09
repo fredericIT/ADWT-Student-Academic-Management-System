@@ -63,11 +63,11 @@ INSERT INTO academic_records (id, student_id) VALUES
 (3, 3)
 ON DUPLICATE KEY UPDATE student_id=VALUES(student_id);
 
-INSERT INTO grades (id, academic_record_id, course_id, lecturer_id, mark, grade_letter) VALUES
-(1, 1, 1, 1, 85.50, 'A'),
-(2, 1, 2, 2, 74.00, 'B'),
-(3, 2, 1, 1, 91.00, 'A'),
-(4, 2, 3, 3, 68.50, 'C')
+INSERT INTO grades (id, academic_record_id, student_id, course_id, lecturer_id, mark, letter_grade, status) VALUES
+(1, 1, 1, 1, 1, 85.50, 'A', 'PASS'),
+(2, 1, 1, 2, 2, 74.00, 'B', 'PASS'),
+(3, 2, 2, 1, 1, 91.00, 'A', 'PASS'),
+(4, 2, 2, 3, 3, 68.50, 'C', 'PASS')
 ON DUPLICATE KEY UPDATE mark=VALUES(mark);
 
 -- 9. Users (passwords: admin123, lecturer123, student123)
