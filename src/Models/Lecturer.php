@@ -10,11 +10,13 @@ use PDO;
 /**
  * Represents a lecturer (faculty member).
  *
- * Encapsulates database operations for the `lecturers` table and provides
- * relationship accessors for the associated Department and assigned Courses.
+ * Extends User and encapsulates database operations for the `lecturers` table
+ * while providing relationship accessors for the associated Department and assigned Courses.
  */
-class Lecturer
+class Lecturer extends User
 {
+    public string $lecturerId;
+
     public function __construct(
         public readonly ?int    $id           = null,
         public string           $firstName    = '',
@@ -23,7 +25,42 @@ class Lecturer
         public ?int             $departmentId = null,
         public ?string          $createdAt    = null,
         public ?string          $updatedAt    = null,
-    ) {}
+        string                  $lecturerId   = '',
+        string                  $password     = '',
+    ) {
+        $fullName = trim("{$firstName} {$lastName}");
+        parent::__construct(
+            userId: $id ?? 0,
+            name: $fullName,
+            email: $email,
+            password: $password
+        );
+        $this->lecturerId = $lecturerId !== '' ? $lecturerId : (string) ($id ?? '');
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Role & UML methods
+    // ------------------------------------------------------------------ //
+
+    public function getRole(): string
+    {
+        return 'Lecturer';
+    }
+
+    public function recordMark(): bool
+    {
+        return true;
+    }
+
+    public function updateMark(): bool
+    {
+        return true;
+    }
+
+    public function viewMarks(): array
+    {
+        return [];
+    }
 
     // ------------------------------------------------------------------ //
     //  Computed properties
@@ -99,6 +136,7 @@ class Lecturer
         $this->firstName    = $data['first_name']   ?? $this->firstName;
         $this->lastName     = $data['last_name']    ?? $this->lastName;
         $this->email        = $data['email']         ?? $this->email;
+        $this->name         = trim("{$this->firstName} {$this->lastName}");
         $this->departmentId = array_key_exists('department_id', $data)
             ? $data['department_id']
             : $this->departmentId;
@@ -189,6 +227,7 @@ class Lecturer
             'department_id' => $this->departmentId,
             'created_at'    => $this->createdAt,
             'updated_at'    => $this->updatedAt,
+            'role'          => $this->getRole(),
         ];
     }
 }

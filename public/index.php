@@ -25,8 +25,20 @@ use App\Router;
 use App\Controllers\DepartmentController;
 use App\Controllers\CourseController;
 use App\Controllers\LecturerController;
+use App\Controllers\AuthController;
 
 $router = new Router();
+
+// --- Authentication & Dashboard ---
+$router->get('/login',                                  [AuthController::class, 'showLoginForm']);
+$router->post('/login',                                 [AuthController::class, 'login']);
+$router->get('/logout',                                 [AuthController::class, 'logout']);
+$router->post('/logout',                                [AuthController::class, 'logout']);
+$router->get('/dashboard',                              [AuthController::class, 'dashboard']);
+$router->get('/student-area',                           [AuthController::class, 'studentArea']);
+$router->get('/lecturer-area',                          [AuthController::class, 'lecturerArea']);
+$router->get('/admin-area',                             [AuthController::class, 'adminArea']);
+$router->get('/unauthorized',                           [AuthController::class, 'unauthorized']);
 
 // --- Departments ---
 $router->get('/departments',                        [DepartmentController::class, 'index']);
@@ -57,7 +69,7 @@ $router->post('/lecturers/{id}/associate-department',   [LecturerController::cla
 
 // --- Root redirect ---
 $router->get('/', function () {
-    header('Location: /departments');
+    header('Location: /dashboard');
     exit;
 });
 
