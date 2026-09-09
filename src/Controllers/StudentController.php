@@ -88,6 +88,8 @@ class StudentController
             $departments = Department::findAll();
             require __DIR__ . '/../../views/students/edit.php';
         }
+    }
+
     // GET or POST /profile
     public function profile(): void
     {
