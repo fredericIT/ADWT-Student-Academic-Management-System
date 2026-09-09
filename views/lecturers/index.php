@@ -21,19 +21,19 @@ require __DIR__ . '/../layout/header.php';
         <a href="/lecturers/create" class="mt-3 inline-block text-brand hover:underline">Register the first one →</a>
     </div>
 <?php else: ?>
-    <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-200">
+    <div class="overflow-x-auto rounded-2xl shadow-sm border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200 bg-white">
-            <thead class="bg-gray-50">
+            <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Department</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Name</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Email</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Department</th>
+                    <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <?php foreach ($lecturers as $lec): ?>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-brand/3 transition-colors duration-150">
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">
                         <?= htmlspecialchars($lec->getFullName()) ?>
                     </td>

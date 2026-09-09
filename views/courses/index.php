@@ -124,15 +124,15 @@ require __DIR__ . '/../layout/header.php';
         <?php endif; ?>
     </div>
 <?php else: ?>
-    <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-200">
+    <div class="overflow-x-auto rounded-2xl shadow-sm border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200 bg-white">
-            <thead class="bg-gray-50">
+            <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Code</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Credits</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Department</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Code</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Name</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Credits</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Department</th>
+                    <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">
                         <?= $isStudent ? 'Registration' : 'Actions' ?>
                     </th>
                 </tr>
@@ -147,7 +147,7 @@ require __DIR__ . '/../layout/header.php';
                     $isEnrolled = !empty($enrolledCourseIds[$course->id]);
                     $isAssigned = !empty($assignedCourseIds[$course->id]);
                 ?>
-                <tr class="hover:bg-gray-50 transition-colors <?= ($isStudent && $isEnrolled) || ($isLecturer && $isAssigned) ? 'bg-indigo-50/20' : '' ?>">
+                <tr class="hover:bg-brand/3 transition-colors duration-150 <?= ($isStudent && $isEnrolled) || ($isLecturer && $isAssigned) ? 'bg-indigo-50/20' : '' ?>">
                     <td class="px-6 py-4 text-sm font-mono font-semibold text-brand"><?= htmlspecialchars($course->code) ?></td>
                     <td class="px-6 py-4 text-sm text-gray-900 font-medium">
                         <?= htmlspecialchars($course->name) ?>
@@ -157,7 +157,7 @@ require __DIR__ . '/../layout/header.php';
                             </span>
                         <?php endif; ?>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500"><?= $course->credits ?></td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-900"><?= $course->credits ?></td>
                     <td class="px-6 py-4 text-sm text-gray-500">
                         <?= $dept ? htmlspecialchars($dept->name) : '<span class="text-gray-300">—</span>' ?>
                     </td>
@@ -178,19 +178,23 @@ require __DIR__ . '/../layout/header.php';
                             <?php endif; ?>
                         <?php elseif ($isLecturer): ?>
                             <?php if ($isAssigned): ?>
-                                <a href="/courses/<?= $course->id ?>/students" class="text-gray-700 hover:underline text-sm font-medium mr-3">Roster</a>
-                                <a href="/results/record?course_id=<?= $course->id ?>" class="text-indigo-600 hover:underline text-sm font-bold">Grade Sheet</a>
+                                <div class="flex justify-end gap-3 items-center">
+                                    <a href="/courses/<?= $course->id ?>/students" class="text-gray-700 hover:underline text-sm font-medium">Roster</a>
+                                    <a href="/results/record?course_id=<?= $course->id ?>" class="text-indigo-600 hover:underline text-sm font-bold">Grade Sheet</a>
+                                </div>
                             <?php else: ?>
                                 <a href="/courses/<?= $course->id ?>/students" class="text-gray-500 hover:underline text-sm font-medium">View Roster</a>
                             <?php endif; ?>
                         <?php else: ?>
-                            <a href="/courses/<?= $course->id ?>/students" class="text-gray-600 hover:underline text-sm font-medium mr-3">Students</a>
-                            <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium">Edit</a>
-                            <?php if (\App\Auth\Auth::isAdmin()): ?>
-                                <form method="POST" action="/courses/<?= $course->id ?>/delete" class="inline ml-3" onsubmit="return confirm('Delete this course? This action cannot be undone.');">
-                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
-                                </form>
-                            <?php endif; ?>
+                            <div class="flex justify-end gap-3 items-center">
+                                <a href="/courses/<?= $course->id ?>/students" class="text-gray-600 hover:underline text-sm font-medium">Students</a>
+                                <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium">Edit</a>
+                                <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                    <form method="POST" action="/courses/<?= $course->id ?>/delete" class="inline" onsubmit="return confirm('Delete this course? This action cannot be undone.');">
+                                        <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
                         <?php endif; ?>
                     </td>
                 </tr>

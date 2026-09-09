@@ -278,14 +278,15 @@ require __DIR__ . '/../layout/header.php';
             <?php else: ?>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Course</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Mark</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Grade</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Status</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Student</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Course</th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wide">Mark</th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wide">Grade</th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wide">Status</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Lecturer</th>
+                                <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -295,20 +296,32 @@ require __DIR__ . '/../layout/header.php';
                                 $lecturer = $grade->getLecturer();
                                 $isPass  = $grade->isPass();
                             ?>
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-brand/3 transition-colors duration-150">
                                 <td class="px-6 py-4 text-sm text-gray-900">
-                                    <div class="font-medium"><?= htmlspecialchars($student ? $student->getFullName() : 'Unknown') ?></div>
-                                    <div class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($student ? $student->studentId : '—') ?></div>
+                                    <?php if ($student): ?>
+                                        <div class="font-medium text-gray-900"><?= htmlspecialchars($student->getFullName()) ?></div>
+                                        <div class="text-xs text-gray-500 font-mono"><?= htmlspecialchars($student->studentId) ?></div>
+                                    <?php else: ?>
+                                        <span class="text-gray-400">Unknown Student #<?= $grade->studentId ?></span>
+                                    <?php endif; ?>
                                 </td>
-                                <td class="px-6 py-4 text-sm">
-                                    <div class="font-mono font-bold text-brand"><?= htmlspecialchars($course ? $course->code : '—') ?></div>
-                                    <div class="text-xs text-gray-600"><?= htmlspecialchars($course ? $course->name : '—') ?></div>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    <?php if ($course): ?>
+                                        <a href="/courses/<?= $course->id ?>/results" class="font-medium text-brand hover:underline">
+                                            <?= htmlspecialchars($course->name) ?>
+                                        </a>
+                                        <div class="text-xs text-gray-500 font-mono">
+                                            <?= htmlspecialchars($course->code) ?> (<?= $course->credits ?> cr)
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-gray-400">Unknown Course #<?= $grade->courseId ?></span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-center font-mono font-bold text-gray-900">
                                     <?= number_format($grade->mark, 2) ?>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-center">
-                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-md font-bold text-xs <?= in_array($grade->letterGrade, ['A', 'B']) ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' ?>">
+                                <td class="px-6 py-4 text-sm text-center font-semibold">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-md font-bold text-xs <?= in_array($grade->letterGrade, ['A', 'B']) ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' ?>">
                                         <?= htmlspecialchars($grade->letterGrade) ?>
                                     </span>
                                 </td>
@@ -321,6 +334,9 @@ require __DIR__ . '/../layout/header.php';
                                         <?php endif; ?>
                                         <span><?= htmlspecialchars($grade->status) ?></span>
                                     </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    <?= htmlspecialchars($lecturer ? $lecturer->getFullName() : '—') ?>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm">
                                     <div class="flex justify-end gap-2 items-center">
@@ -447,15 +463,15 @@ require __DIR__ . '/../layout/header.php';
         <?php else: ?>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Course</th>
-                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Mark</th>
-                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Grade</th>
-                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Lecturer</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Student</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Course</th>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wide">Mark</th>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wide">Grade</th>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wide">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Lecturer</th>
+                            <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -465,7 +481,7 @@ require __DIR__ . '/../layout/header.php';
                             $lecturer = $grade->getLecturer();
                             $isPass  = $grade->isPass();
                         ?>
-                        <tr class="hover:bg-gray-50 transition-colors">
+                        <tr class="hover:bg-brand/3 transition-colors duration-150">
                             <td class="px-6 py-4 text-sm text-gray-900">
                                 <?php if ($student): ?>
                                     <div class="font-medium text-gray-900"><?= htmlspecialchars($student->getFullName()) ?></div>
@@ -490,13 +506,18 @@ require __DIR__ . '/../layout/header.php';
                                 <?= number_format($grade->mark, 2) ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-center font-semibold">
-                                <span class="inline-flex items-center justify-center w-7 h-7 rounded-md font-bold text-xs <?= in_array($grade->letterGrade, ['A', 'B']) ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' ?>">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-md font-bold text-xs <?= in_array($grade->letterGrade, ['A', 'B']) ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' ?>">
                                     <?= htmlspecialchars($grade->letterGrade) ?>
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <?= $isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
-                                    <?= htmlspecialchars($grade->status) ?>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold <?= $isPass ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200' ?>">
+                                    <?php if ($isPass): ?>
+                                        <span class="flex h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                    <?php else: ?>
+                                        <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                    <?php endif; ?>
+                                    <span><?= htmlspecialchars($grade->status) ?></span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600">
@@ -504,9 +525,7 @@ require __DIR__ . '/../layout/header.php';
                             </td>
                             <td class="px-6 py-4 text-right text-sm">
                                 <div class="flex justify-end gap-2 items-center">
-                                    <a href="/results/<?= $grade->id ?>/edit" class="text-brand hover:underline font-medium text-xs">
-                                        Edit Mark
-                                    </a>
+                                    <a href="/results/<?= $grade->id ?>/edit" class="text-brand hover:underline font-medium text-xs">Edit Mark</a>
                                     <?php if (\App\Auth\Auth::isAdmin()): ?>
                                         <form method="POST" action="/results/<?= $grade->id ?>/delete" class="inline" onsubmit="return confirm('Delete this result record? This action cannot be undone.');">
                                             <button type="submit" class="text-red-600 hover:text-red-800 font-medium text-xs">Delete</button>

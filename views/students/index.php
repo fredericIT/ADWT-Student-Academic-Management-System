@@ -65,14 +65,14 @@ require __DIR__ . '/../layout/header.php';
     <?php else: ?>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-                <thead class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                     <tr>
-                        <th class="px-6 py-3">Student ID</th>
-                        <th class="px-6 py-3">Full Name</th>
-                        <th class="px-6 py-3">Email</th>
-                        <th class="px-6 py-3">Department</th>
-                        <th class="px-6 py-3">Address</th>
-                        <th class="px-6 py-3 text-right">Actions</th>
+                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Student ID</th>
+                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Full Name</th>
+                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Email</th>
+                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Department</th>
+                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Address</th>
+                        <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
@@ -81,7 +81,7 @@ require __DIR__ . '/../layout/header.php';
                             $dept = $s->getDepartment();
                             $addr = $s->getAddress();
                         ?>
-                        <tr class="hover:bg-gray-50 transition-colors">
+                        <tr class="hover:bg-brand/3 transition-colors duration-150">
                             <td class="px-6 py-4 font-mono font-semibold text-brand">
                                 <?= htmlspecialchars($s->studentId) ?>
                             </td>
@@ -103,22 +103,16 @@ require __DIR__ . '/../layout/header.php';
                             <td class="px-6 py-4 text-gray-600 text-xs max-w-xs truncate">
                                 <?= $addr ? htmlspecialchars($addr->getFullAddress()) : '<span class="text-gray-400 italic">No address</span>' ?>
                             </td>
-                            <td class="px-6 py-4 text-right space-x-3">
-                                <a href="/students/<?= $s->id ?>"
-                                   class="font-medium text-brand hover:underline">
-                                    View
-                                </a>
-                                <a href="/students/<?= $s->id ?>/edit"
-                                   class="font-medium text-gray-600 hover:text-gray-900">
-                                    Edit
-                                </a>
-                                <?php if (\App\Auth\Auth::isAdmin()): ?>
-                                    <form method="POST" action="/students/<?= $s->id ?>/delete" class="inline" onsubmit="return confirm('Delete this student? This action cannot be undone.');">
-                                        <button type="submit" class="font-medium text-red-600 hover:text-red-800">
-                                            Delete
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-3 items-center">
+                                    <a href="/students/<?= $s->id ?>" class="font-medium text-brand hover:underline">View</a>
+                                    <a href="/students/<?= $s->id ?>/edit" class="font-medium text-gray-600 hover:text-gray-900">Edit</a>
+                                    <?php if (\App\Auth\Auth::isAdmin()): ?>
+                                        <form method="POST" action="/students/<?= $s->id ?>/delete" class="inline" onsubmit="return confirm('Delete this student? This action cannot be undone.');">
+                                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">Delete</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>

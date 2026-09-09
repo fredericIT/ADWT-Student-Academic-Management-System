@@ -21,19 +21,19 @@ require __DIR__ . '/../layout/header.php';
         <a href="/departments/create" class="mt-3 inline-block text-brand hover:underline">Create the first one →</a>
     </div>
 <?php else: ?>
-    <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-200">
+    <div class="overflow-x-auto rounded-2xl shadow-sm border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200 bg-white">
-            <thead class="bg-gray-50">
+            <thead class="bg-gradient-to-r from-brand/5 to-brand/3 border-b-2 border-brand">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Code</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Code</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Name</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Description</th>
+                    <th class="px-6 py-4 text-right text-sm font-bold text-gray-900 uppercase tracking-wide">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <?php foreach ($departments as $dept): ?>
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr class="hover:bg-brand/3 transition-colors duration-150">
                     <td class="px-6 py-4 text-sm font-mono font-semibold text-brand">
                         <?= htmlspecialchars($dept->code) ?>
                     </td>
