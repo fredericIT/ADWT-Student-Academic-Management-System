@@ -23,12 +23,13 @@ class DashboardController
      */
     public function index(): void
     {
-        $stats               = $this->service->getStatistics();
-        $recentStudents      = $this->service->getRecentStudents(5);
-        $recentEnrollments   = $this->service->getRecentEnrollments(5);
-        $departmentBreakdown = $this->service->getDepartmentBreakdown();
-        $courseSummary       = $this->service->getCourseSummary(6);
-
-        require __DIR__ . '/../../views/dashboard/index.php';
+        $role = \App\Auth\Auth::getRole();
+        $target = match ($role) {
+            'student'  => '/my-courses',
+            'lecturer' => '/courses',
+            default    => '/students',
+        };
+        header('Location: ' . $target);
+        exit;
     }
 }

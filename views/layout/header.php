@@ -43,6 +43,12 @@ $navClass = function (string $target, bool $exact = false) use ($isNavActive): s
         ? 'bg-blue-800 text-white font-semibold px-3 py-1.5 rounded-lg text-sm shadow-inner transition-colors'
         : 'text-blue-100 hover:text-white hover:bg-blue-600/40 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors';
 };
+$homeUrl = match ($currentRole) {
+    'administrator' => '/students',
+    'lecturer'      => '/courses',
+    'student'       => '/my-courses',
+    default         => '/login',
+};
 ?>
 <!-- Navigation -->
 <nav class="bg-brand shadow-md">
@@ -50,90 +56,53 @@ $navClass = function (string $target, bool $exact = false) use ($isNavActive): s
         <div class="flex items-center justify-between h-16 gap-4">
             <!-- Left: Brand Logo -->
             <div class="flex items-center gap-6">
-                <a href="/" class="text-white text-xl font-bold tracking-tight flex items-center gap-2">
+                <a href="<?= $homeUrl ?>" class="text-white text-xl font-bold tracking-tight flex items-center gap-2">
                     <span>🎓</span>
                     <span>SAMS</span>
                 </a>
 
-                <!-- Desktop Nav Links -->
+                <!-- Desktop Nav Links (Streamlined: Admin=3, Lecturer=2, Student=3) -->
                 <div class="hidden md:flex items-center gap-1">
-                    <a href="/" class="<?= $navClass('/', true) ?>">
-                        Dashboard
-                    </a>
-                    <a href="/search" class="<?= $navClass('/search') ?>">
-                        Search
-                    </a>
-
                     <?php if ($currentRole === 'administrator'): ?>
                         <a href="/students" class="<?= $navClass('/students') ?>">
-                            Students
-                        </a>
-                        <a href="/courses" class="<?= $navClass('/courses') ?>">
-                            Courses
-                        </a>
-                        <a href="/enrollments" class="<?= $navClass('/enrollments') ?>">
-                            Enrollments
-                        </a>
-                        <a href="/results" class="<?= $navClass('/results') ?>">
-                            Results
-                        </a>
-                        <a href="/departments" class="<?= $navClass('/departments') ?>">
-                            Departments
+                            👨‍🎓 Students
                         </a>
                         <a href="/lecturers" class="<?= $navClass('/lecturers') ?>">
-                            Lecturers
+                            👨‍🏫 Lecturers
+                        </a>
+                        <a href="/departments" class="<?= $navClass('/departments') ?>">
+                            🏛️ Departments
                         </a>
                     <?php elseif ($currentRole === 'lecturer'): ?>
-                        <a href="/my-assigned-courses" class="<?= $navClass('/my-assigned-courses') ?>">
-                            My Courses
-                        </a>
                         <a href="/courses" class="<?= $navClass('/courses') ?>">
-                            All Courses
-                        </a>
-                        <a href="/results/record" class="<?= $navClass('/results/record') ?>">
-                            Record Marks
+                            📖 Manage Courses
                         </a>
                         <a href="/results" class="<?= $navClass('/results') ?>">
-                            Results
+                            📊 Student Grades
                         </a>
                     <?php elseif ($currentRole === 'student'): ?>
                         <a href="/my-courses" class="<?= $navClass('/my-courses') ?>">
-                            My Courses
-                        </a>
-                        <a href="/enrollments/create" class="<?= $navClass('/enrollments/create') ?>">
-                            Register Course
+                            📚 Course Registration
                         </a>
                         <a href="/results" class="<?= $navClass('/results') ?>">
-                            Academic Results
+                            📊 Academic Results
                         </a>
                         <a href="/profile" class="<?= $navClass('/profile') ?>">
-                            My Profile
+                            👤 My Profile
                         </a>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <!-- Right: Search, Role Switcher, User Badge & Logout -->
+            <!-- Right: User Badge & Logout -->
             <div class="flex items-center gap-3">
-                <!-- Quick Global Search Input -->
-                <form action="/search" method="GET" class="relative hidden sm:block">
-                    <input type="text"
-                           name="q"
-                           placeholder="Search system..."
-                           class="w-36 lg:w-48 bg-blue-800/80 text-white placeholder-blue-200 text-xs rounded-lg pl-8 pr-3 py-1.5 border border-blue-600 focus:outline-none focus:ring-2 focus:ring-white focus:bg-blue-900 transition-all">
-                    <svg class="w-3.5 h-3.5 text-blue-200 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </form>
-
-                <!-- User Profile & Logout -->
                 <div class="flex items-center gap-2">
                     <span class="text-white text-xs font-semibold hidden md:inline">
-                        <?= htmlspecialchars($displayName) ?>
+                        <?= htmlspecialchars($displayName) ?> (<?= htmlspecialchars(ucfirst($currentRole)) ?>)
                     </span>
                     <a href="/logout"
                        title="Sign Out"
-                       class="text-blue-200 hover:text-white bg-blue-800/80 hover:bg-red-600 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors">
+                       class="text-blue-200 hover:text-white bg-blue-800/80 hover:bg-red-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
                         Logout
                     </a>
                 </div>
@@ -142,24 +111,17 @@ $navClass = function (string $target, bool $exact = false) use ($isNavActive): s
 
         <!-- Mobile Nav Sub-row -->
         <div class="flex md:hidden overflow-x-auto py-2 border-t border-blue-600/40 gap-1 text-xs">
-            <a href="/" class="<?= $navClass('/', true) ?>">Dashboard</a>
-            <a href="/search" class="<?= $navClass('/search') ?>">Search</a>
             <?php if ($currentRole === 'administrator'): ?>
-                <a href="/students" class="<?= $navClass('/students') ?>">Students</a>
-                <a href="/courses" class="<?= $navClass('/courses') ?>">Courses</a>
-                <a href="/enrollments" class="<?= $navClass('/enrollments') ?>">Enrollments</a>
-                <a href="/results" class="<?= $navClass('/results') ?>">Results</a>
-                <a href="/departments" class="<?= $navClass('/departments') ?>">Departments</a>
-                <a href="/lecturers" class="<?= $navClass('/lecturers') ?>">Lecturers</a>
+                <a href="/students" class="<?= $navClass('/students') ?>">👨‍🎓 Students</a>
+                <a href="/lecturers" class="<?= $navClass('/lecturers') ?>">👨‍🏫 Lecturers</a>
+                <a href="/departments" class="<?= $navClass('/departments') ?>">🏛️ Departments</a>
             <?php elseif ($currentRole === 'lecturer'): ?>
-                <a href="/my-assigned-courses" class="<?= $navClass('/my-assigned-courses') ?>">My Courses</a>
-                <a href="/results/record" class="<?= $navClass('/results/record') ?>">Record Marks</a>
-                <a href="/results" class="<?= $navClass('/results') ?>">Results</a>
+                <a href="/courses" class="<?= $navClass('/courses') ?>">📖 Courses</a>
+                <a href="/results" class="<?= $navClass('/results') ?>">📊 Student Grades</a>
             <?php elseif ($currentRole === 'student'): ?>
-                <a href="/my-courses" class="<?= $navClass('/my-courses') ?>">My Courses</a>
-                <a href="/enrollments/create" class="<?= $navClass('/enrollments/create') ?>">Register</a>
-                <a href="/results" class="<?= $navClass('/results') ?>">Results</a>
-                <a href="/profile" class="<?= $navClass('/profile') ?>">Profile</a>
+                <a href="/my-courses" class="<?= $navClass('/my-courses') ?>">📚 Register Courses</a>
+                <a href="/results" class="<?= $navClass('/results') ?>">📊 Academic Results</a>
+                <a href="/profile" class="<?= $navClass('/profile') ?>">👤 Profile</a>
             <?php endif; ?>
         </div>
     </div>
