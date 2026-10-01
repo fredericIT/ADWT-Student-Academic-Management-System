@@ -90,6 +90,13 @@ class StudentController
         }
     }
 
+    // POST /students/{id}/delete
+    public function delete(string $id): void
+    {
+        Student::deleteById((int) $id);
+        $this->redirect('/students?success=deleted');
+    }
+
     // GET or POST /profile
     public function profile(): void
     {

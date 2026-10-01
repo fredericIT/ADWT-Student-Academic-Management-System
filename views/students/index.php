@@ -112,6 +112,11 @@ require __DIR__ . '/../layout/header.php';
                                    class="font-medium text-gray-600 hover:text-gray-900">
                                     Edit
                                 </a>
+                                <form method="POST" action="/students/<?= $s->id ?>/delete" onsubmit="return confirm('Are you sure you want to delete this student?');" class="inline">
+                                    <button type="submit" class="font-medium text-red-600 hover:text-red-800">
+                                        Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

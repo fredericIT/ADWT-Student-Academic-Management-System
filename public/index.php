@@ -84,6 +84,8 @@ $router->post('/students',                               [StudentController::cla
 $router->get('/students/{id}',                           [StudentController::class, 'show']);
 $router->get('/students/{id}/edit',                      [StudentController::class, 'edit']);
 $router->post('/students/{id}',                          [StudentController::class, 'update']);
+$router->post('/students/{id}/delete',                   [StudentController::class, 'delete']);
+$router->get('/students/{id}/delete',                    [StudentController::class, 'delete']);
 $router->get('/profile',                                 [StudentController::class, 'profile']);
 $router->post('/profile',                                [StudentController::class, 'profile']);
 
@@ -92,6 +94,7 @@ $router->get('/enrollments',                             [EnrollmentController::
 $router->get('/enrollments/create',                      [EnrollmentController::class, 'create']);
 $router->post('/enrollments',                            [EnrollmentController::class, 'store']);
 $router->post('/enrollments/{id}/drop',                  [EnrollmentController::class, 'drop']);
+$router->get('/enrollments/{id}/drop',                   [EnrollmentController::class, 'drop']);
 $router->get('/courses/{id}/students',                   [EnrollmentController::class, 'courseStudents']);
 $router->get('/my-courses',                              [EnrollmentController::class, 'myCourses']);
 
@@ -101,6 +104,8 @@ $router->get('/departments/create',                      [DepartmentController::
 $router->post('/departments',                            [DepartmentController::class, 'store']);
 $router->get('/departments/{id}/edit',                   [DepartmentController::class, 'edit']);
 $router->post('/departments/{id}',                       [DepartmentController::class, 'update']);
+$router->post('/departments/{id}/delete',                [DepartmentController::class, 'delete']);
+$router->get('/departments/{id}/delete',                 [DepartmentController::class, 'delete']);
 $router->get('/departments/{id}/courses',                [DepartmentController::class, 'courses']);
 $router->get('/departments/{id}/lecturers',              [DepartmentController::class, 'lecturers']);
 
@@ -110,6 +115,8 @@ $router->get('/courses/create',                          [CourseController::clas
 $router->post('/courses',                                [CourseController::class, 'store']);
 $router->get('/courses/{id}/edit',                       [CourseController::class, 'edit']);
 $router->post('/courses/{id}',                           [CourseController::class, 'update']);
+$router->post('/courses/{id}/delete',                    [CourseController::class, 'delete']);
+$router->get('/courses/{id}/delete',                     [CourseController::class, 'delete']);
 $router->post('/courses/{id}/assign-lecturer',           [CourseController::class, 'assignLecturer']);
 $router->post('/courses/{id}/remove-lecturer',           [CourseController::class, 'removeLecturer']);
 
@@ -119,12 +126,15 @@ $router->get('/lecturers/create',                        [LecturerController::cl
 $router->post('/lecturers',                              [LecturerController::class, 'store']);
 $router->get('/lecturers/{id}/edit',                     [LecturerController::class, 'edit']);
 $router->post('/lecturers/{id}',                         [LecturerController::class, 'update']);
+$router->post('/lecturers/{id}/delete',                  [LecturerController::class, 'delete']);
+$router->get('/lecturers/{id}/delete',                   [LecturerController::class, 'delete']);
 $router->get('/lecturers/{id}/courses',                  [LecturerController::class, 'courses']);
 $router->post('/lecturers/{id}/associate-department',    [LecturerController::class, 'associateDepartment']);
 $router->get('/my-assigned-courses',                     [LecturerController::class, 'myCourses']);
 
 // --- Academic Results & Records ---
 $router->get('/results',                                 [ResultController::class, 'index']);
+$router->get('/my-results',                              [ResultController::class, 'index']);
 $router->get('/results/record',                          [ResultController::class, 'record']);
 $router->post('/results/record',                         [ResultController::class, 'store']);
 $router->get('/results/{id}/edit',                       [ResultController::class, 'edit']);

@@ -160,6 +160,51 @@ class Lecturer extends User implements SearchableInterface
     }
 
     /**
+     * Search lecturers by name (first name, last name) or email using PDO LIKE.
+     *
+     * @return Lecturer[]
+     */
+    public static function search(string $term): array
+    {
+        $wildcard = '%' . trim($term) . '%';
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare(
+            'SELECT * FROM lecturers
+              WHERE first_name LIKE :t1
+                 OR last_name LIKE :t2
+                 OR email LIKE :t3
+              ORDER BY last_name, first_name'
+        );
+        $stmt->execute([
+            ':t1' => $wildcard,
+            ':t2' => $wildcard,
+            ':t3' => $wildcard,
+        ]);
+        return array_map(fn(array $row) => self::fromRow($row), $stmt->fetchAll());
+    }
+
+    /**
+     * Delete this lecturer record from the database.
+     */
+    public function delete(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * Delete a lecturer by primary key.
+     */
+    public static function deleteById(int $id): bool
+    {
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM lecturers WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
+    /**
      * Associate this lecturer with a department (or disassociate by passing null).
      */
     public function associateDepartment(?int $departmentId): void

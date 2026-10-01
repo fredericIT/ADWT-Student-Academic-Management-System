@@ -248,9 +248,14 @@ class Grade
         if ($this->id === null) {
             return false;
         }
+        return self::deleteById($this->id);
+    }
+
+    public static function deleteById(int $id): bool
+    {
         $pdo  = Connection::getInstance();
         $stmt = $pdo->prepare('DELETE FROM grades WHERE id = :id');
-        return $stmt->execute([':id' => $this->id]);
+        return $stmt->execute([':id' => $id]);
     }
 
     // ------------------------------------------------------------------ //

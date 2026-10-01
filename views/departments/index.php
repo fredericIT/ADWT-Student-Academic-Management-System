@@ -44,13 +44,16 @@ require __DIR__ . '/../layout/header.php';
                         <?= htmlspecialchars($dept->description ?? '—') ?>
                     </td>
                     <td class="px-6 py-4 text-right text-sm">
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end items-center gap-3">
                             <a href="/departments/<?= $dept->id ?>/courses"
                                class="text-gray-500 hover:text-brand font-medium">Courses</a>
                             <a href="/departments/<?= $dept->id ?>/lecturers"
                                class="text-gray-500 hover:text-brand font-medium">Lecturers</a>
                             <a href="/departments/<?= $dept->id ?>/edit"
                                class="text-brand hover:underline font-medium">Edit</a>
+                            <form method="POST" action="/departments/<?= $dept->id ?>/delete" onsubmit="return confirm('Are you sure you want to delete this department?');" class="inline">
+                                <button type="submit" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                            </form>
                         </div>
                     </td>
                 </tr>

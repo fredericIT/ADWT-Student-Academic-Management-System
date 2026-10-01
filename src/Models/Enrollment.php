@@ -54,6 +54,27 @@ class Enrollment
     }
 
     /**
+     * Delete this enrollment permanently.
+     */
+    public function delete(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * Delete an enrollment by primary key.
+     */
+    public static function deleteById(int $id): bool
+    {
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM enrollments WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
+    /**
      * Reactivate a previously dropped enrollment.
      */
     public function reactivate(): self

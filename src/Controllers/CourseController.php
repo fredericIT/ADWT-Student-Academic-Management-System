@@ -19,17 +19,19 @@ class CourseController
         $this->service = new CourseService();
     }
 
-    // GET /courses[?code=XX]
+    // GET /courses[?query=XX]
     public function index(): void
     {
-        $searchCode = isset($_GET['code']) ? trim($_GET['code']) : '';
+        $searchCode = isset($_GET['query']) ? trim($_GET['query']) : (isset($_GET['search']) ? trim($_GET['search']) : (isset($_GET['code']) ? trim($_GET['code']) : ''));
         $searchResult = null;
 
         if ($searchCode !== '') {
-            $searchResult = $this->service->searchByCode($searchCode);
+            $courses = Course::search($searchCode);
+            $searchResult = !empty($courses) ? $courses[0] : null;
+        } else {
+            $courses = $this->service->getAll();
         }
 
-        $courses     = $this->service->getAll();
         $departments = Department::findAll();
 
         $isStudent  = \App\Auth\Auth::isStudent();
@@ -59,6 +61,13 @@ class CourseController
         }
 
         require __DIR__ . '/../../views/courses/index.php';
+    }
+
+    // POST or GET /courses/{id}/delete
+    public function delete(string $id): void
+    {
+        Course::deleteById((int) $id);
+        $this->redirect('/courses?success=deleted');
     }
 
     // GET /courses/create

@@ -35,11 +35,19 @@ require __DIR__ . '/../layout/header.php';
                 <span>&rarr;</span>
             </a>
         <?php elseif ($isLecturer): ?>
-            <a href="/my-assigned-courses"
-               class="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm">
-                <span>My Teaching Assignments</span>
-                <span>&rarr;</span>
-            </a>
+            <div class="flex gap-2">
+                <a href="/my-assigned-courses"
+                   class="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm">
+                    <span>My Teaching Assignments</span>
+                </a>
+                <a href="/courses/create"
+                   class="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    New Course
+                </a>
+            </div>
         <?php else: ?>
             <a href="/courses/create"
                class="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm">
@@ -52,11 +60,11 @@ require __DIR__ . '/../layout/header.php';
     </div>
 </div>
 
-<!-- Search by code -->
+<!-- Search by code or name -->
 <form method="GET" action="/courses" class="mb-6 flex gap-2 max-w-md">
-    <input type="text" name="code"
+    <input type="text" name="query"
            value="<?= htmlspecialchars($searchCode) ?>"
-           placeholder="Search by course code (e.g. CS101)…"
+           placeholder="Search course by code or title (e.g. CS101, Web)..."
            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand">
     <button type="submit"
             class="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
@@ -174,13 +182,20 @@ require __DIR__ . '/../layout/header.php';
                         <?php elseif ($isLecturer): ?>
                             <?php if ($isAssigned): ?>
                                 <a href="/courses/<?= $course->id ?>/students" class="text-gray-700 hover:underline text-sm font-medium mr-3">Roster</a>
-                                <a href="/results/record?course_id=<?= $course->id ?>" class="text-indigo-600 hover:underline text-sm font-bold">Grade Sheet</a>
+                                <a href="/results/record?course_id=<?= $course->id ?>" class="text-indigo-600 hover:underline text-sm font-bold mr-3">Grade Sheet</a>
                             <?php else: ?>
-                                <a href="/courses/<?= $course->id ?>/students" class="text-gray-500 hover:underline text-sm font-medium">View Roster</a>
+                                <a href="/courses/<?= $course->id ?>/students" class="text-gray-500 hover:underline text-sm font-medium mr-3">Roster</a>
                             <?php endif; ?>
+                            <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium mr-3">Edit</a>
+                            <form method="POST" action="/courses/<?= $course->id ?>/delete" onsubmit="return confirm('Are you sure you want to delete this course?');" class="inline">
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                            </form>
                         <?php else: ?>
                             <a href="/courses/<?= $course->id ?>/students" class="text-gray-600 hover:underline text-sm font-medium mr-3">Students</a>
-                            <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium">Edit</a>
+                            <a href="/courses/<?= $course->id ?>/edit" class="text-brand hover:underline text-sm font-medium mr-3">Edit</a>
+                            <form method="POST" action="/courses/<?= $course->id ?>/delete" onsubmit="return confirm('Are you sure you want to delete this course?');" class="inline">
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                            </form>
                         <?php endif; ?>
                     </td>
                 </tr>

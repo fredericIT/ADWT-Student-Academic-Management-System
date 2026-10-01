@@ -68,6 +68,13 @@ class DepartmentController
         }
     }
 
+    // POST or GET /departments/{id}/delete
+    public function delete(string $id): void
+    {
+        Department::deleteById((int) $id);
+        $this->redirect('/departments?success=deleted');
+    }
+
     // GET /departments/{id}/courses
     public function courses(string $id): void
     {

@@ -127,6 +127,49 @@ class Course
         return $this;
     }
 
+    /**
+     * Search courses by code or title using PDO LIKE.
+     *
+     * @return Course[]
+     */
+    public static function search(string $term): array
+    {
+        $wildcard = '%' . trim($term) . '%';
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare(
+            'SELECT * FROM courses
+              WHERE code LIKE :t1
+                 OR name LIKE :t2
+              ORDER BY code'
+        );
+        $stmt->execute([
+            ':t1' => $wildcard,
+            ':t2' => $wildcard,
+        ]);
+        return array_map(fn(array $row) => self::fromRow($row), $stmt->fetchAll());
+    }
+
+    /**
+     * Delete this course from the database.
+     */
+    public function delete(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * Delete a course by primary key.
+     */
+    public static function deleteById(int $id): bool
+    {
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM courses WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
     // ------------------------------------------------------------------ //
     //  Relationship accessors
     // ------------------------------------------------------------------ //

@@ -18,11 +18,19 @@ class LecturerController
         $this->service = new LecturerService();
     }
 
-    // GET /lecturers
+    // GET /lecturers[?query=XX]
     public function index(): void
     {
-        $lecturers = $this->service->getAll();
+        $query = isset($_GET['query']) ? trim($_GET['query']) : (isset($_GET['search']) ? trim($_GET['search']) : '');
+        $lecturers = $query !== '' ? Lecturer::search($query) : $this->service->getAll();
         require __DIR__ . '/../../views/lecturers/index.php';
+    }
+
+    // POST or GET /lecturers/{id}/delete
+    public function delete(string $id): void
+    {
+        Lecturer::deleteById((int) $id);
+        $this->redirect('/lecturers?success=deleted');
     }
 
     // GET /lecturers/create

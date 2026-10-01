@@ -174,6 +174,7 @@ $successMessages = [
     'created'        => 'Record created successfully.',
     'updated'        => 'Record updated successfully.',
     'registered'     => 'Record registered successfully.',
+    'deleted'        => 'Record deleted successfully.',
     'enrolled'       => ($currentRole === 'student') ? 'You have registered for the course successfully!' : 'Student enrolled in course successfully.',
     'dropped'        => ($currentRole === 'student') ? 'You have dropped the course from your schedule.' : 'Course dropped successfully.',
     'grade_recorded' => 'Academic mark recorded successfully.',

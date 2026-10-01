@@ -106,6 +106,27 @@ class Department
         return $this;
     }
 
+    /**
+     * Delete this department from the database.
+     */
+    public function delete(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * Delete a department by primary key.
+     */
+    public static function deleteById(int $id): bool
+    {
+        $pdo  = Connection::getInstance();
+        $stmt = $pdo->prepare('DELETE FROM departments WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
     // ------------------------------------------------------------------ //
     //  Relationship accessors
     // ------------------------------------------------------------------ //

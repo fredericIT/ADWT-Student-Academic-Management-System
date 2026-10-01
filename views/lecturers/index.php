@@ -15,10 +15,36 @@ require __DIR__ . '/../layout/header.php';
     </a>
 </div>
 
+<!-- Search Form -->
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+    <form method="GET" action="/lecturers" class="flex gap-3">
+        <div class="relative flex-1">
+            <input type="text"
+                   name="query"
+                   value="<?= htmlspecialchars($_GET['query'] ?? $_GET['search'] ?? '') ?>"
+                   placeholder="Search lecturer by Name or Email..."
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand focus:border-brand">
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+        </div>
+        <button type="submit"
+                class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            Search
+        </button>
+        <?php if (!empty($_GET['query']) || !empty($_GET['search'])): ?>
+            <a href="/lecturers"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
+                Clear
+            </a>
+        <?php endif; ?>
+    </form>
+</div>
+
 <?php if (empty($lecturers)): ?>
-    <div class="text-center py-16 text-gray-400">
-        <p class="text-lg">No lecturers registered yet.</p>
-        <a href="/lecturers/create" class="mt-3 inline-block text-brand hover:underline">Register the first one →</a>
+    <div class="text-center py-16 text-gray-400 bg-white rounded-xl border border-gray-200">
+        <p class="text-lg">No lecturers found.</p>
+        <a href="/lecturers/create" class="mt-3 inline-block text-brand hover:underline">Register a lecturer →</a>
     </div>
 <?php else: ?>
     <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-200">
@@ -49,11 +75,14 @@ require __DIR__ . '/../layout/header.php';
                         <?php endif; ?>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end items-center gap-3">
                             <a href="/lecturers/<?= $lec->id ?>/courses"
                                class="text-gray-500 hover:text-brand text-sm font-medium">Courses</a>
                             <a href="/lecturers/<?= $lec->id ?>/edit"
                                class="text-brand hover:underline text-sm font-medium">Edit</a>
+                            <form method="POST" action="/lecturers/<?= $lec->id ?>/delete" onsubmit="return confirm('Are you sure you want to delete this lecturer?');" class="inline">
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                            </form>
                         </div>
                     </td>
                 </tr>
